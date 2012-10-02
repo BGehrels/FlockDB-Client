@@ -1,0 +1,8 @@
+A FlockDB Java Client
+Copyright 2012 Benjamin Gehrels
+
+It is based on the FlockDB Thrift API originally developed by Robey Pointer, Nick Kallen, Ed Ceaser and John Kalucki at
+Twitter.
+
+Thrift is originally developed by Mark Slee, Aditya Agarwal and Marc Kwiatkowski at Facebook. It is now a project of the
+Apache Software Foundation.
