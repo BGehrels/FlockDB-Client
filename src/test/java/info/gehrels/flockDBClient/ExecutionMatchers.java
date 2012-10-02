@@ -25,7 +25,8 @@ import org.hamcrest.Matcher;
 
 import java.util.List;
 
-import static info.gehrels.flockDBClient.ByteHelper.toLongIterable;
+import static info.gehrels.flockDBClient.ByteHelper.toLongArray;
+import static info.gehrels.flockDBClient.PrimitiveMatchers.isLongArray;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -59,12 +60,11 @@ public class ExecutionMatchers {
 		};
 	}
 
-	static FeatureMatcher<ExecuteOperation, Iterable<Long>> withDestinationIds(Long... destinationIds) {
-		return new FeatureMatcher<ExecuteOperation, Iterable<Long>>(contains(destinationIds), "with destination ids",
-		                                                            "destination ids") {
+	static Matcher<ExecuteOperation> withDestinationIds(long... destinationIds) {
+		return new FeatureMatcher<ExecuteOperation, long[]>(isLongArray(destinationIds), "with destination ids", "destination ids") {
 			@Override
-			protected Iterable<Long> featureValueOf(ExecuteOperation actual) {
-				return toLongIterable(actual.getTerm().getDestination_ids());
+			protected long[] featureValueOf(ExecuteOperation actual) {
+				return toLongArray(actual.getTerm().getDestination_ids());
 			}
 		};
 	}

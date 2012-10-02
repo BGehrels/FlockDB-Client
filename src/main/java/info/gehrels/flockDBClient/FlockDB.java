@@ -99,8 +99,8 @@ public class FlockDB {
         return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, forward, destinationIds);
     }
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long startIndex, int maxResults, long... destinationIds) throws FlockException, IOException {
-     return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, forward, startIndex, maxResults, destinationIds);
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, long startIndex, int maxResults, boolean forward, long... destinationIds) throws FlockException, IOException {
+     return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, startIndex, maxResults, forward, destinationIds);
  }
 
     public ExecutionBuilder batchExecution(Priority priority) throws FlockException, IOException {

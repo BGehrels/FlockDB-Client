@@ -154,7 +154,7 @@ public class FlockDBTest {
 				           withSourceId(1),
 			               withGraphId(2),
 			               withForward(true),
-			               withDestinationIds(contains(4L, 3L))
+			               withDestinationIds(4L, 3L)
 			           )
 		           )
 		);
@@ -171,7 +171,7 @@ public class FlockDBTest {
 				           withSourceId(1),
 			               withGraphId(2),
 			               withForward(true),
-			               withDestinationIds(contains(4L, 3L, 2L, 1L)),
+			               withDestinationIds(4L, 3L, 2L, 1L),
 			               EdgeSelectMatchers.withStartIndex(40),
 			               EdgeSelectMatchers.withMaxResults(20)
 			           )

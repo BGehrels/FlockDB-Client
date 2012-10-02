@@ -33,7 +33,6 @@ import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 import static info.gehrels.flockDBClient.SelectionQuery.union;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
 public class SelectionQueryTest {
@@ -64,7 +63,7 @@ public class SelectionQueryTest {
 				           withSourceId(1),
 				           withGraphId(2),
 				           withForward(true),
-			               SelectMatchers.withDestinationIds(containsInAnyOrder(2L, 3L, 4L, 5L))
+			               SelectMatchers.withDestinationIds(2L, 3L, 4L, 5L)
 			           )
 		           )
 		);

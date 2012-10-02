@@ -33,7 +33,9 @@ import static info.gehrels.flockDBClient.EdgeSelectMatchers.anEdgeQuery;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withDestinationIds;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withForward;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withGraphId;
+import static info.gehrels.flockDBClient.EdgeSelectMatchers.withMaxResults;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withSourceId;
+import static info.gehrels.flockDBClient.EdgeSelectMatchers.withStartIndex;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,7 +54,7 @@ public class EdgeSelectionBuilderTest {
 	public void executesCorrectQueryAndReturnsResultsOnSelectEdge() throws IOException,
 		FlockException, TException {
 		doReturn(STUB_RESULTS).when(backingFlockMock).select_edges(Matchers.any(List.class));
-		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, true, 1, 2, 4, 3).execute();
+		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, true, 4, 3).execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
@@ -63,7 +65,8 @@ public class EdgeSelectionBuilderTest {
 				           withSourceId(1),
 				           withGraphId(2),
 				           withForward(true),
-				           withDestinationIds(contains(4L, 3L))
+				           withDestinationIds(4L, 3L),
+				           withStartIndex(-1)
 			           )
 		           )
 		);
@@ -73,7 +76,7 @@ public class EdgeSelectionBuilderTest {
 	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPaging() throws IOException, FlockException,
 		TException {
 		doReturn(STUB_RESULTS).when(backingFlockMock).select_edges(Matchers.any(List.class));
-		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, true, 40, 20, 4, 3, 2, 1).execute();
+		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, 40, 20, true, 4, 3, 2, 1).execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
@@ -84,11 +87,12 @@ public class EdgeSelectionBuilderTest {
 				           withSourceId(1),
 				           withGraphId(2),
 				           withForward(true),
-				           withDestinationIds(contains(4L, 3L, 2L, 1L)),
-				           EdgeSelectMatchers.withStartIndex(40),
-				           EdgeSelectMatchers.withMaxResults(20)
+				           withDestinationIds(4L, 3L, 2L, 1L),
+				           withStartIndex(40),
+				           withMaxResults(20)
 			           )
 		           )
 		);
 	}
+
 }

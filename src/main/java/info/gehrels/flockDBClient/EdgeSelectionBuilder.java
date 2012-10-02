@@ -41,11 +41,11 @@ public class EdgeSelectionBuilder {
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long... destinationIds) {
-		return selectEdges(sourceId, graphId, forward, 0, Integer.MAX_VALUE, destinationIds);
+		return selectEdges(sourceId, graphId, -1, Integer.MAX_VALUE, forward, destinationIds);
 	}
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long startIndex,
-	                                        int maxResults, long... destinationIds) {
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, long startIndex,
+		                                        int maxResults, boolean forward, long... destinationIds) {
 		ByteBuffer buffy = asByteBuffer(destinationIds);
 		QueryTerm term = new QueryTerm(sourceId, graphId, forward).setDestination_ids(buffy);
 		this.queries.add(new EdgeQuery(term, new Page(maxResults, startIndex)));

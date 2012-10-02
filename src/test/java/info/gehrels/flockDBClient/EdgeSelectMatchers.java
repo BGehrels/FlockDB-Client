@@ -19,9 +19,9 @@ package info.gehrels.flockDBClient;
 import com.twitter.flockdb.thrift.EdgeQuery;
 import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
-import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
+import static info.gehrels.flockDBClient.PrimitiveMatchers.isLongArray;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -87,12 +87,11 @@ public class EdgeSelectMatchers {
 		};
 	}
 
-	static FeatureMatcher<EdgeQuery, Iterable<Long>> withDestinationIds(
-		Matcher<? super Iterable<Long>> subMatcher) {
-		return new FeatureMatcher<EdgeQuery, Iterable<Long>>(subMatcher, "destination ids:", "destination ids:") {
+	static TypeSafeDiagnosingMatcher<EdgeQuery> withDestinationIds(long... destinationIds) {
+		return new FeatureMatcher<EdgeQuery, long[]>(isLongArray(destinationIds), "destination ids:", "destination ids:") {
 			@Override
-			protected Iterable<Long> featureValueOf(EdgeQuery actual) {
-				return ByteHelper.toLongIterable(actual.getTerm().getDestination_ids());
+			protected long[] featureValueOf(EdgeQuery actual) {
+				return ByteHelper.toLongArray(actual.getTerm().getDestination_ids());
 			}
 		};
 	}

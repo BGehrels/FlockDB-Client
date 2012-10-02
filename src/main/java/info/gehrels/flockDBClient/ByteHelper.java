@@ -20,8 +20,6 @@ package info.gehrels.flockDBClient;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.apache.commons.lang.ArrayUtils.isNotEmpty;
 
@@ -39,12 +37,15 @@ final class ByteHelper {
 		return buf;
 	}
 
-	static Iterable<Long> toLongIterable(byte[] destination_ids) {
-		LongBuffer buffy = ByteBuffer.wrap(destination_ids).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer();
-		Collection<Long> actualDestinationIds = new ArrayList<>();
+	static long[] toLongArray(byte[] ids) {
+		LongBuffer buffy = ByteBuffer.wrap(ids).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer();
+		long[] result = new long[buffy.capacity()];
+
+		int i = 0;
 		while (buffy.hasRemaining()) {
-			actualDestinationIds.add(buffy.get());
+			result[i++] = buffy.get();
 		}
-		return actualDestinationIds;
+
+		return result;
 	}
 }
