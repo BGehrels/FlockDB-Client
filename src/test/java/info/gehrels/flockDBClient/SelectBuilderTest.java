@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectQuery;
+import static info.gehrels.flockDBClient.SelectMatchers.withMaxResults;
 import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
+import static info.gehrels.flockDBClient.SelectMatchers.withStartIndex;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -51,7 +53,7 @@ public class SelectBuilderTest {
 		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
 		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
 		List<Results> results = new SelectBuilder(flockClient)
-			.select(firstSelectionQuery, 0, 5)
+			.select(firstSelectionQuery, -1, 5)
 			.select(secondSelectionQuery, 3, 10)
 			.execute();
 
@@ -60,16 +62,14 @@ public class SelectBuilderTest {
 		assertThat(actualParameters,
 		           contains(
 			           aSelectQuery(
-				           withOperations(
-					           is(firstSelectionQuery.getSelectOperations())),
-				           SelectMatchers.withStartIndex(0),
-				           SelectMatchers.withMaxResults(5)
+				           withOperations(is(firstSelectionQuery.getSelectOperations())),
+				           withStartIndex(-1),
+				           withMaxResults(5)
 			           ),
 			           aSelectQuery(
-				           withOperations(
-					           is(secondSelectionQuery.getSelectOperations())),
-				           SelectMatchers.withStartIndex(3),
-				           SelectMatchers.withMaxResults(10)
+				           withOperations(is(secondSelectionQuery.getSelectOperations())),
+				           withStartIndex(3),
+				           withMaxResults(10)
 			           )
 		           )
 		);

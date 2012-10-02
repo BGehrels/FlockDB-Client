@@ -40,7 +40,7 @@ public class SelectBuilder {
 	}
 
 	public SelectBuilder select(SelectionQuery firstQuery) {
-		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(Integer.MAX_VALUE, 0)));
+		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(Integer.MAX_VALUE, -1)));
 		return this;
 	}
 

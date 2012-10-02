@@ -104,7 +104,8 @@ public class FlockDBTest {
 			           aSelectQuery(
 				           withOperations(
 					           CoreMatchers.<Iterable<? extends SelectOperation>>is(firstQuery.getSelectOperations())
-				           )
+				           ),
+				           withStartIndex(-1)
 			           )
 		           )
 		);
@@ -145,7 +146,7 @@ public class FlockDBTest {
 
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnSelectEdge() throws IOException, FlockException {
-		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,true, 1, 2, 4, 3);
+		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,true, 4, 3);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),
@@ -154,7 +155,8 @@ public class FlockDBTest {
 				           withSourceId(1),
 			               withGraphId(2),
 			               withForward(true),
-			               withDestinationIds(4L, 3L)
+			               withDestinationIds(4L, 3L),
+			               EdgeSelectMatchers.withStartIndex(-1)
 			           )
 		           )
 		);
@@ -162,7 +164,7 @@ public class FlockDBTest {
 
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnSelectEdgeWithPaging() throws IOException, FlockException {
-		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,true, 40, 20, 4, 3, 2, 1);
+		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2, 40, 20,true, 4, 3, 2, 1);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),
