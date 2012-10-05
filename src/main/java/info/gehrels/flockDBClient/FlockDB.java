@@ -35,9 +35,10 @@ import java.io.IOException;
 
 public class FlockDB {
     Iface backingFlockClient;
+	private TTransport transport;
 
-    public FlockDB(String hostname, int port) throws IOException {
-        TTransport transport = new TFramedTransport(new TSocket(hostname, port, 1000));
+	public FlockDB(String hostname, int port) throws IOException {
+		transport = new TFramedTransport(new TSocket(hostname, port, 1000));
         TProtocol protocol = new TBinaryProtocol(transport);
         try {
             transport.open();
@@ -106,4 +107,8 @@ public class FlockDB {
     public ExecutionBuilder batchExecution(Priority priority) throws FlockException, IOException {
         return new ExecutionBuilder(backingFlockClient, priority);
     }
+
+	public void close() {
+		transport.close();
+	}
 }
