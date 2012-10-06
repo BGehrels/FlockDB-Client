@@ -34,8 +34,8 @@ import org.apache.thrift.transport.TTransportException;
 import java.io.IOException;
 
 public class FlockDB {
-    Iface backingFlockClient;
 	private TTransport transport;
+	private Iface backingFlockClient;
 
 	public FlockDB(String hostname, int port) throws IOException {
 		transport = new TFramedTransport(new TSocket(hostname, port, 1000));
