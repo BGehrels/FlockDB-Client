@@ -24,7 +24,7 @@ import java.nio.LongBuffer;
 import static org.apache.commons.lang.ArrayUtils.isNotEmpty;
 
 final class ByteHelper {
-	static ByteBuffer asByteBuffer(long[] destinationIds) {
+	static ByteBuffer asByteBufferOrNull(long... destinationIds) {
 		ByteBuffer buf = null;
 		if (isNotEmpty(destinationIds)) {
 			buf = ByteBuffer.wrap(new byte[destinationIds.length * (Long.SIZE / 8)]);
@@ -34,6 +34,18 @@ final class ByteHelper {
 			}
 			buf.rewind();
 		}
+		return buf;
+	}
+
+
+	static ByteBuffer asByteBuffer(long... destinationIds) {
+		ByteBuffer buf = null;
+		buf = ByteBuffer.wrap(new byte[destinationIds.length * (Long.SIZE / 8)]);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		for (long destinationId : destinationIds) {
+			buf.putLong(destinationId);
+		}
+		buf.rewind();
 		return buf;
 	}
 

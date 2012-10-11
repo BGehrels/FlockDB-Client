@@ -40,7 +40,7 @@ public class SelectionQuery {
 
 	public static SelectionQuery simpleSelection(long sourceId, int graphId, boolean isForward,
 	                                             long... destinationIds) {
-		ByteBuffer buf = ByteHelper.asByteBuffer(destinationIds);
+		ByteBuffer buf = ByteHelper.asByteBufferOrNull(destinationIds);
 
 		return new SelectionQuery(
 			singletonList(

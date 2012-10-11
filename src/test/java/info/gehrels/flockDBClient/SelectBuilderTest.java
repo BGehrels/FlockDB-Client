@@ -22,7 +22,9 @@ import com.twitter.flockdb.thrift.Results;
 import com.twitter.flockdb.thrift.SelectOperation;
 import com.twitter.flockdb.thrift.SelectQuery;
 import org.apache.thrift.TException;
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -35,7 +37,7 @@ import static info.gehrels.flockDBClient.SelectMatchers.withMaxResults;
 import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
 import static info.gehrels.flockDBClient.SelectMatchers.withStartIndex;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -43,17 +45,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class SelectBuilderTest {
+
+	private List<Results> resultStub;
+
+	@Before
+	public void createResultStub() {
+		resultStub = new ArrayList<>();
+		resultStub.add(new Results(ByteHelper.asByteBufferOrNull(123, 5), 0, -1));
+		resultStub.add(new Results(ByteHelper.asByteBufferOrNull(4, 12), 0, -1));
+	}
+
 	@Test
-	public void delegatesExecutionToFlockClientAndReturnsResultsWithPaging() throws FlockException, TException, IOException {
+	public void delegatesExecutionToFlockClientAndReturnsResultsWithPaging() throws FlockException, TException,
+		IOException {
 		Iface flockClient = mock(Iface.class);
 		ArgumentCaptor<List> queryListCaptor = ArgumentCaptor.forClass(List.class);
-		List<Results> resultStub = new ArrayList<>();
 		doReturn(resultStub).when(flockClient).select2(any(List.class));
 
 		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
 		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
-		List<Results> results = new SelectBuilder(flockClient)
-			.select(firstSelectionQuery,  5)
+		List<PagedNodeIdList> results = new SelectBuilder(flockClient)
+			.select(firstSelectionQuery, 5)
 			.select(secondSelectionQuery, 10)
 			.execute();
 
@@ -62,18 +74,19 @@ public class SelectBuilderTest {
 		assertThat(actualParameters,
 		           contains(
 			           aSelectQuery(
-				           withOperations(is(firstSelectionQuery.getSelectOperations())),
+				           withOperations(isList(firstSelectionQuery.getSelectOperations())),
 				           withStartIndex(-1),
 				           withMaxResults(5)
 			           ),
 			           aSelectQuery(
-				           withOperations(is(secondSelectionQuery.getSelectOperations())),
+				           withOperations(isList(secondSelectionQuery.getSelectOperations())),
 				           withStartIndex(-1),
 				           withMaxResults(10)
 			           )
 		           )
 		);
-		assertThat(results, sameInstance(resultStub));
+
+		verifyResultStub(results);
 	}
 
 	@Test
@@ -81,12 +94,11 @@ public class SelectBuilderTest {
 		IOException {
 		Iface flockClient = mock(Iface.class);
 		ArgumentCaptor<List> queryListCaptor = ArgumentCaptor.forClass(List.class);
-		List<Results> resultStub = new ArrayList<>();
 		doReturn(resultStub).when(flockClient).select2(any(List.class));
 
 		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
 		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
-		List<Results> results = new SelectBuilder(flockClient)
+		List<PagedNodeIdList> results = new SelectBuilder(flockClient)
 			.select(firstSelectionQuery)
 			.select(secondSelectionQuery)
 			.execute();
@@ -97,18 +109,38 @@ public class SelectBuilderTest {
 		           contains(
 			           aSelectQuery(
 				           withOperations(
-					           is(firstSelectionQuery.getSelectOperations()))
+					           isList(firstSelectionQuery.getSelectOperations()))
 			           ),
 			           aSelectQuery(
 				           withOperations(
-					           is(secondSelectionQuery.getSelectOperations()))
+					           isList(secondSelectionQuery.getSelectOperations()))
 			           )
 		           )
 		);
-		assertThat(results, sameInstance(resultStub));
+
+		verifyResultStub(results);
 	}
 
-	private Matcher<Iterable<? extends SelectOperation>> is(List<SelectOperation> selectOperations) {
+	private void verifyResultStub(List<PagedNodeIdList> results) {
+		assertThat(results,
+		           contains(
+			           pagedNodeIdListWithElements(contains(is(123L), is(5L))),
+			           pagedNodeIdListWithElements(contains(is(4L), is(12L)))));
+	}
+
+	private Matcher<PagedNodeIdList> pagedNodeIdListWithElements(
+		Matcher<? super Iterable<Long>> subMatcher) {
+		return new FeatureMatcher<PagedNodeIdList, Iterable<Long>>(subMatcher, "a paged node-id list",
+		                                                           "a paged node-id list") {
+
+			@Override
+			protected Iterable<Long> featureValueOf(PagedNodeIdList actual) {
+				return actual;
+			}
+		};
+	}
+
+	private Matcher<Iterable<? extends SelectOperation>> isList(List<SelectOperation> selectOperations) {
 		return org.hamcrest.Matchers
 			.<Iterable<? extends SelectOperation>>is(selectOperations);
 	}

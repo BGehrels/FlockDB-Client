@@ -49,12 +49,20 @@ public class SelectBuilder {
 		return this;
 	}
 
-	public List<Results> execute() throws IOException, FlockException {
+	public List<PagedNodeIdList> execute() throws IOException, FlockException {
+		List<PagedNodeIdList> result = new ArrayList<>();
+		List<Results> rawResults;
 		try {
-			return backingFlockClient.select2(this.queries);
+			rawResults = backingFlockClient.select2(this.queries);
 		} catch (TException e) {
 			throw new IOException(e);
 		}
+
+		for (int i =0; i < rawResults.size(); i++) {
+			result.add(new PagedNodeIdList(backingFlockClient, this.queries.get(i), rawResults.get(i)));
+		}
+
+		return result;
 	}
 
 	Iface getBackingFlockClient() {

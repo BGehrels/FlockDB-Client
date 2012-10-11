@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static info.gehrels.flockDBClient.ByteHelper.asByteBuffer;
+import static info.gehrels.flockDBClient.ByteHelper.asByteBufferOrNull;
 
 public class ExecutionBuilder {
 	private final Iface backingFlockClient;
@@ -46,7 +46,7 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Add,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBuffer(destinationIds))
+				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			).setPosition(position)
 		);
 		return this;
@@ -56,7 +56,7 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Remove,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBuffer(destinationIds))
+				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
@@ -66,7 +66,7 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Negate,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBuffer(destinationIds))
+				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
@@ -76,7 +76,7 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Archive,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBuffer(destinationIds))
+				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;

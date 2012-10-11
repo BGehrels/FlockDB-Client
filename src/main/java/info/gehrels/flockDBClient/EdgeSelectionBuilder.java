@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static info.gehrels.flockDBClient.ByteHelper.asByteBuffer;
+import static info.gehrels.flockDBClient.ByteHelper.asByteBufferOrNull;
 
 public class EdgeSelectionBuilder {
 	private final Iface backingFlockClient;
@@ -45,7 +45,7 @@ public class EdgeSelectionBuilder {
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward, long... destinationIds) {
-		ByteBuffer buffy = asByteBuffer(destinationIds);
+		ByteBuffer buffy = asByteBufferOrNull(destinationIds);
 		QueryTerm term = new QueryTerm(sourceId, graphId, forward).setDestination_ids(buffy);
 		this.queries.add(new EdgeQuery(term, new Page(maxResults, -1)));
 		return this;
