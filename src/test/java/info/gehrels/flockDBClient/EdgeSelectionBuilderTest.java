@@ -76,7 +76,7 @@ public class EdgeSelectionBuilderTest {
 	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPaging() throws IOException, FlockException,
 		TException {
 		doReturn(STUB_RESULTS).when(backingFlockMock).select_edges(Matchers.any(List.class));
-		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, 40, 20, true, 4, 3, 2, 1).execute();
+		List<EdgeResults> results = edgeSelectionBuilder.selectEdges(1, 2, 20, true, 4, 3, 2, 1).execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
@@ -88,7 +88,7 @@ public class EdgeSelectionBuilderTest {
 				           withGraphId(2),
 				           withForward(true),
 				           withDestinationIds(4L, 3L, 2L, 1L),
-				           withStartIndex(40),
+				           withStartIndex(-1),
 				           withMaxResults(20)
 			           )
 		           )

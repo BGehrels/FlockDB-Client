@@ -53,8 +53,8 @@ public class SelectBuilderTest {
 		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
 		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
 		List<Results> results = new SelectBuilder(flockClient)
-			.select(firstSelectionQuery, -1, 5)
-			.select(secondSelectionQuery, 3, 10)
+			.select(firstSelectionQuery,  5)
+			.select(secondSelectionQuery, 10)
 			.execute();
 
 		verify(flockClient).select2(queryListCaptor.capture());
@@ -68,7 +68,7 @@ public class SelectBuilderTest {
 			           ),
 			           aSelectQuery(
 				           withOperations(is(secondSelectionQuery.getSelectOperations())),
-				           withStartIndex(3),
+				           withStartIndex(-1),
 				           withMaxResults(10)
 			           )
 		           )

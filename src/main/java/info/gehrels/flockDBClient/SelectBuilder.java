@@ -44,8 +44,8 @@ public class SelectBuilder {
 		return this;
 	}
 
-	public SelectBuilder select(SelectionQuery firstQuery, long startIndex, int maxResults) {
-		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(maxResults, startIndex)));
+	public SelectBuilder select(SelectionQuery firstQuery, int maxResults) {
+		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(maxResults, -1)));
 		return this;
 	}
 
