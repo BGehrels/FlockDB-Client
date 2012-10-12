@@ -36,7 +36,7 @@ import static info.gehrels.flockDBClient.EdgeSelectMatchers.withSourceId;
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectQuery;
 import static info.gehrels.flockDBClient.SelectMatchers.withMaxResults;
 import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
-import static info.gehrels.flockDBClient.SelectMatchers.withStartIndex;
+import static info.gehrels.flockDBClient.SelectMatchers.withCursor;
 import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -105,7 +105,7 @@ public class FlockDBTest {
 				           withOperations(
 					           CoreMatchers.<Iterable<? extends SelectOperation>>is(firstQuery.getSelectOperations())
 				           ),
-				           withStartIndex(-1)
+				           withCursor(-1)
 			           )
 		           )
 		);
@@ -124,7 +124,7 @@ public class FlockDBTest {
 				           withOperations(
 					           CoreMatchers.<Iterable<? extends SelectOperation>>is(firstQuery.getSelectOperations())
 				           ),
-			               withStartIndex(-1),
+			               withCursor(-1),
 			               withMaxResults(10)
 			           )
 		           )
@@ -156,7 +156,7 @@ public class FlockDBTest {
 			               withGraphId(2),
 			               withForward(true),
 			               withDestinationIds(4L, 3L),
-			               EdgeSelectMatchers.withStartIndex(-1)
+			               EdgeSelectMatchers.withCursor(-1)
 			           )
 		           )
 		);
@@ -174,7 +174,7 @@ public class FlockDBTest {
 			               withGraphId(2),
 			               withForward(true),
 			               withDestinationIds(4L, 3L, 2L, 1L),
-			               EdgeSelectMatchers.withStartIndex(-1),
+			               EdgeSelectMatchers.withCursor(-1),
 			               EdgeSelectMatchers.withMaxResults(20)
 			           )
 		           )

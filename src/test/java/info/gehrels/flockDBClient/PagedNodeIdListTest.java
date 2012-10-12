@@ -18,19 +18,39 @@
 package info.gehrels.flockDBClient;
 
 import com.twitter.flockdb.thrift.FlockDB.Iface;
+import com.twitter.flockdb.thrift.FlockException;
+import com.twitter.flockdb.thrift.Page;
 import com.twitter.flockdb.thrift.Results;
 import com.twitter.flockdb.thrift.SelectQuery;
+import org.apache.thrift.TException;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
+import java.io.IOException;
+import java.util.List;
+
+import static com.twitter.flockdb.thrift.SelectOperationType.SimpleQuery;
+import static info.gehrels.flockDBClient.SelectMatchers.aSelectOperation;
+import static info.gehrels.flockDBClient.SelectMatchers.aSelectQuery;
+import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
+import static info.gehrels.flockDBClient.SelectMatchers.withType;
+import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class PagedNodeIdListTest {
 	private Iface backingFlockClient = mock(Iface.class);
-	private SelectQuery selectQuery = mock(SelectQuery.class);
+	private SelectQuery selectQuery = new SelectQuery(simpleSelection(1, 2, true).getSelectOperations(),
+	                                                  new Page(10, 12));
+
+	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
 
 	@Test
 	public void returnsEmptyIteratorForEmptyResults() {
@@ -59,7 +79,7 @@ public class PagedNodeIdListTest {
 
 	@Test
 	public void returnsCorrectIteratorForNonEmptyResults() {
-		Results results = new Results(ByteHelper.asByteBuffer(4,9,2), 0, -1);
+		Results results = new Results(ByteHelper.asByteBuffer(4, 9, 2), 0, -1);
 		PagedNodeIdList list = new PagedNodeIdList(backingFlockClient, selectQuery, results);
 
 		assertThat(list, contains(is(4L), is(9L), is(2L)));
@@ -79,6 +99,67 @@ public class PagedNodeIdListTest {
 		PagedNodeIdList list = new PagedNodeIdList(backingFlockClient, selectQuery, results);
 
 		assertThat(list.hasPreviousPage(), is(true));
+	}
+
+	@Test
+	public void executesCorrectQueryForNextPage() throws IOException, FlockException, TException {
+		Results stubResults = new Results(ByteHelper.asByteBuffer(1, 2), 11, -1);
+		doReturn(singletonList(stubResults)).when(backingFlockClient).select2(any(List.class));
+		PagedNodeIdList list = new PagedNodeIdList(backingFlockClient, selectQuery, stubResults);
+
+		list.getNextPage();
+
+		verify(backingFlockClient).select2(captor.capture());
+		List<SelectQuery> queries = captor.getValue();
+		assertThat(queries,
+		           contains(
+			           aSelectQuery(
+				           withOperations(
+					           contains(
+						           aSelectOperation(
+							           withType(SimpleQuery),
+							           SelectMatchers.withSourceId(1),
+							           SelectMatchers.withGraphId(2),
+							           SelectMatchers.withForward(true)
+						           )
+					           )
+				           ),
+
+				           SelectMatchers.withMaxResults(10),
+				           SelectMatchers.withCursor(11)
+			           )
+		           ));
+	}
+
+
+	@Test
+	public void executesCorrectQueryForPreviousPage() throws IOException, FlockException, TException {
+		Results stubResults = new Results(ByteHelper.asByteBuffer(1, 2), 0, 13);
+		doReturn(singletonList(stubResults)).when(backingFlockClient).select2(any(List.class));
+		PagedNodeIdList list = new PagedNodeIdList(backingFlockClient, selectQuery, stubResults);
+
+		list.getPreviousPage();
+
+		verify(backingFlockClient).select2(captor.capture());
+		List<SelectQuery> queries = captor.getValue();
+		assertThat(queries,
+		           contains(
+			           aSelectQuery(
+				           withOperations(
+					           contains(
+						           aSelectOperation(
+							           withType(SimpleQuery),
+							           SelectMatchers.withSourceId(1),
+							           SelectMatchers.withGraphId(2),
+							           SelectMatchers.withForward(true)
+						           )
+					           )
+				           ),
+
+				           SelectMatchers.withMaxResults(10),
+				           SelectMatchers.withCursor(13)
+			           )
+		           ));
 	}
 
 

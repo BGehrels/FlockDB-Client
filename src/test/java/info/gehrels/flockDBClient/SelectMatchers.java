@@ -177,7 +177,7 @@ public class SelectMatchers {
 		};
 	}
 
-	static FeatureMatcher<SelectQuery, Long> withStartIndex(long startIndex) {
+	static FeatureMatcher<SelectQuery, Long> withCursor(long startIndex) {
 		return new FeatureMatcher<SelectQuery, Long>(equalTo(startIndex), "start index", "start index") {
 			@Override
 			protected Long featureValueOf(SelectQuery actual) {

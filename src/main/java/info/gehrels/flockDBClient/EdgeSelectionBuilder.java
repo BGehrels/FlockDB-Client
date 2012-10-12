@@ -44,7 +44,8 @@ public class EdgeSelectionBuilder {
 		return selectEdges(sourceId, graphId, Integer.MAX_VALUE, forward, destinationIds);
 	}
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward, long... destinationIds) {
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward,
+	                                        long... destinationIds) {
 		ByteBuffer buffy = asByteBufferOrNull(destinationIds);
 		QueryTerm term = new QueryTerm(sourceId, graphId, forward).setDestination_ids(buffy);
 		this.queries.add(new EdgeQuery(term, new Page(maxResults, -1)));
@@ -59,11 +60,19 @@ public class EdgeSelectionBuilder {
 		return queries;
 	}
 
-	public List<EdgeResults> execute() throws IOException, FlockException {
+	public List<PagedEdgeList> execute() throws IOException, FlockException {
+		List<PagedEdgeList> result = new ArrayList<>();
+
+		List<EdgeResults> rawResults;
 		try {
-			return backingFlockClient.select_edges(queries);
+			rawResults = backingFlockClient.select_edges(queries);
 		} catch (TException e) {
 			throw new IOException(e);
 		}
+
+		for (int i = 0; i < rawResults.size(); i++) {
+			result.add(new PagedEdgeList(backingFlockClient, this.queries.get(i), rawResults.get(i)));
+		}
+		return result;
 	}
 }

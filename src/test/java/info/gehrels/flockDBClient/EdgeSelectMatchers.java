@@ -96,7 +96,7 @@ public class EdgeSelectMatchers {
 		};
 	}
 
-	static FeatureMatcher<EdgeQuery, Long> withStartIndex(long startIndex) {
+	static FeatureMatcher<EdgeQuery, Long> withCursor(long startIndex) {
 		return new FeatureMatcher<EdgeQuery, Long>(equalTo(startIndex), "start index", "start index") {
 			@Override
 			protected Long featureValueOf(EdgeQuery actual) {

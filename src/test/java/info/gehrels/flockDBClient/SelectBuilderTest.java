@@ -35,7 +35,7 @@ import java.util.List;
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectQuery;
 import static info.gehrels.flockDBClient.SelectMatchers.withMaxResults;
 import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
-import static info.gehrels.flockDBClient.SelectMatchers.withStartIndex;
+import static info.gehrels.flockDBClient.SelectMatchers.withCursor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -75,12 +75,12 @@ public class SelectBuilderTest {
 		           contains(
 			           aSelectQuery(
 				           withOperations(isList(firstSelectionQuery.getSelectOperations())),
-				           withStartIndex(-1),
+				           withCursor(-1),
 				           withMaxResults(5)
 			           ),
 			           aSelectQuery(
 				           withOperations(isList(secondSelectionQuery.getSelectOperations())),
-				           withStartIndex(-1),
+				           withCursor(-1),
 				           withMaxResults(10)
 			           )
 		           )

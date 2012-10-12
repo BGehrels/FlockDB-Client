@@ -17,10 +17,11 @@
 
 package info.gehrels.flockDBClient;
 
+import com.twitter.flockdb.thrift.Edge;
+import com.twitter.flockdb.thrift.EdgeQuery;
+import com.twitter.flockdb.thrift.EdgeResults;
 import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
-import com.twitter.flockdb.thrift.Results;
-import com.twitter.flockdb.thrift.SelectQuery;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
@@ -28,25 +29,23 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class PagedNodeIdList implements Iterable<Long> {
+public class PagedEdgeList implements Iterable<Edge> {
 	private final Iface backingFlockClient;
-	private final SelectQuery selectQuery;
-	private final Results results;
-	private long[] ids;
+	private final EdgeQuery edgeQuery;
+	private final EdgeResults results;
 
-	public PagedNodeIdList(Iface backingFlockClient, SelectQuery selectQuery, Results results) {
+	public PagedEdgeList(Iface backingFlockClient, EdgeQuery edgeQuery, EdgeResults results) {
 		this.backingFlockClient = backingFlockClient;
-		this.selectQuery = selectQuery;
+		this.edgeQuery = edgeQuery;
 		this.results = results;
-		this.ids = ByteHelper.toLongArray(results.getIds());
 	}
 
-	public PagedNodeIdList getNextPage() throws FlockException, IOException{
+	public PagedEdgeList getNextPage() throws FlockException, IOException{
 		return getOtherPage(results.next_cursor);
 	}
 
 
-	public PagedNodeIdList getPreviousPage() throws FlockException, IOException {
+	public PagedEdgeList getPreviousPage() throws FlockException, IOException {
 		return getOtherPage(results.prev_cursor);
 
 	}
@@ -59,36 +58,20 @@ public class PagedNodeIdList implements Iterable<Long> {
 		return results.prev_cursor != -1;
 	}
 
-	private PagedNodeIdList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
-		SelectQuery nextPageQuery = selectQuery.setPage(selectQuery.getPage().setCursor(otherPagesCursor));
-		List<Results> results;
+	private PagedEdgeList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
+		EdgeQuery nextPageQuery = edgeQuery.setPage(edgeQuery.getPage().setCursor(otherPagesCursor));
+		List<EdgeResults> results;
 		try {
-			results = backingFlockClient.select2(Collections.singletonList(nextPageQuery));
+			results = backingFlockClient.select_edges(Collections.singletonList(nextPageQuery));
 		} catch (TException e) {
 			throw new IOException(e);
 		}
-		return new PagedNodeIdList(backingFlockClient, nextPageQuery, results.get(0));
+		return new PagedEdgeList(backingFlockClient, nextPageQuery, results.get(0));
 	}
 
 
 	@Override
-	public Iterator<Long> iterator() {
-		return new Iterator<Long>() {
-			int index = 0;
-			@Override
-			public boolean hasNext() {
-				return ids.length >= index+1;
-			}
-
-			@Override
-			public Long next() {
-				return ids[index++];
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+	public Iterator<Edge> iterator() {
+		return this.results.getEdges().iterator();
 	}
 }
