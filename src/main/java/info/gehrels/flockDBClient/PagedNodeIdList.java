@@ -34,7 +34,7 @@ public class PagedNodeIdList implements Iterable<Long> {
 	private final Results results;
 	private long[] ids;
 
-	public PagedNodeIdList(Iface backingFlockClient, SelectQuery selectQuery, Results results) {
+	PagedNodeIdList(Iface backingFlockClient, SelectQuery selectQuery, Results results) {
 		this.backingFlockClient = backingFlockClient;
 		this.selectQuery = selectQuery;
 		this.results = results;

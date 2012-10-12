@@ -34,7 +34,7 @@ public class PagedEdgeList implements Iterable<Edge> {
 	private final EdgeQuery edgeQuery;
 	private final EdgeResults results;
 
-	public PagedEdgeList(Iface backingFlockClient, EdgeQuery edgeQuery, EdgeResults results) {
+	PagedEdgeList(Iface backingFlockClient, EdgeQuery edgeQuery, EdgeResults results) {
 		this.backingFlockClient = backingFlockClient;
 		this.edgeQuery = edgeQuery;
 		this.results = results;
