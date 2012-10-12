@@ -69,8 +69,9 @@ public class PagedNodeIdListTest {
 	}
 
 	@Test
-	public void hasNoPreviousPageForMinusOneAsPreviousCursor() {
-		Results results = new Results(ByteHelper.asByteBuffer(), 0, -1);
+	public void hasNoPreviousPageForMinusOneAsCurrentCursor() {
+		Results results = new Results(ByteHelper.asByteBuffer(), 0, -2);
+		selectQuery.setPage(new Page(15, -1));
 		PagedNodeIdList list = new PagedNodeIdList(backingFlockClient, selectQuery, results);
 
 		assertThat(list.hasPreviousPage(), is(false));

@@ -56,7 +56,7 @@ public class PagedNodeIdList implements Iterable<Long> {
 	}
 
 	public boolean hasPreviousPage() {
-		return results.prev_cursor != -1;
+		return this.selectQuery.getPage().getCursor() != -1;
 	}
 
 	private PagedNodeIdList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
