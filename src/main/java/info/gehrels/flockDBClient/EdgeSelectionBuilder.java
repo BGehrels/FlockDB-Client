@@ -41,7 +41,7 @@ public class EdgeSelectionBuilder {
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long... destinationIds) {
-		return selectEdges(sourceId, graphId, Integer.MAX_VALUE, forward, destinationIds);
+		return selectEdges(sourceId, graphId, Integer.MAX_VALUE-1, forward, destinationIds);
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward,
