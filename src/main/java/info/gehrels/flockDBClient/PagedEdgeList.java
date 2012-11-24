@@ -55,7 +55,7 @@ public class PagedEdgeList implements Iterable<Edge> {
 	}
 
 	public boolean hasPreviousPage() {
-		return edgeQuery.getPage().getCursor() != -1;
+		return edgeQuery.getPage().getCursor() != 0;
 	}
 
 	private PagedEdgeList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
