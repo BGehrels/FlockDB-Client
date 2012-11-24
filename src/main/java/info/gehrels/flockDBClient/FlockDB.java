@@ -38,7 +38,11 @@ public class FlockDB {
 	private Iface backingFlockClient;
 
 	public FlockDB(String hostname, int port) throws IOException {
-		transport = new TFramedTransport(new TSocket(hostname, port, 1000));
+		this(hostname, port, 1000);
+    }
+
+	public FlockDB(String hostname, int port, int timeoutInMilliSeconds) throws IOException {
+		transport = new TFramedTransport(new TSocket(hostname, port, timeoutInMilliSeconds));
         TProtocol protocol = new TBinaryProtocol(transport);
         try {
             transport.open();
@@ -46,7 +50,7 @@ public class FlockDB {
             throw new IOException("Opening the transport failed", e);
         }
         backingFlockClient = new Client(protocol);
-    }
+	}
 
     FlockDB(Iface flockDbIFaceMock) {
         backingFlockClient = flockDbIFaceMock;
