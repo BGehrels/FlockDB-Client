@@ -62,8 +62,8 @@ public class SelectBuilderTest {
 		ArgumentCaptor<List> queryListCaptor = ArgumentCaptor.forClass(List.class);
 		doReturn(resultStub).when(flockClient).select2(any(List.class));
 
-		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
-		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
+		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, Direction.OUTGOING);
+		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, Direction.OUTGOING);
 		List<PagedNodeIdList> results = new SelectBuilder(flockClient)
 			.select(firstSelectionQuery, 5)
 			.select(secondSelectionQuery, 10)
@@ -96,8 +96,8 @@ public class SelectBuilderTest {
 		ArgumentCaptor<List> queryListCaptor = ArgumentCaptor.forClass(List.class);
 		doReturn(resultStub).when(flockClient).select2(any(List.class));
 
-		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, true);
-		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, true);
+		SelectionQuery firstSelectionQuery = SelectionQuery.simpleSelection(1, 1, Direction.OUTGOING);
+		SelectionQuery secondSelectionQuery = SelectionQuery.simpleSelection(1, 2, Direction.OUTGOING);
 		List<PagedNodeIdList> results = new SelectBuilder(flockClient)
 			.select(firstSelectionQuery)
 			.select(secondSelectionQuery)

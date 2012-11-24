@@ -16,17 +16,32 @@
 
 package info.gehrels.flockDBClient;
 
-import com.twitter.flockdb.thrift.ExecuteOperationType;
 import com.twitter.flockdb.thrift.ExecuteOperations;
 import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
-import com.twitter.flockdb.thrift.Priority;
 import org.apache.thrift.TException;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 
+import static com.twitter.flockdb.thrift.ExecuteOperationType.Add;
+import static com.twitter.flockdb.thrift.ExecuteOperationType.Archive;
+import static com.twitter.flockdb.thrift.ExecuteOperationType.Negate;
+import static com.twitter.flockdb.thrift.ExecuteOperationType.Remove;
+import static com.twitter.flockdb.thrift.Priority.Low;
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
+import static info.gehrels.flockDBClient.ExecutionMatchers.anOperation;
+import static info.gehrels.flockDBClient.ExecutionMatchers.hasOperations;
+import static info.gehrels.flockDBClient.ExecutionMatchers.hasPriority;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withDestinationIds;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withForward;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withGraphId;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withPosition;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withSourceId;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withType;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withoutDestinationIds;
+import static info.gehrels.flockDBClient.ExecutionMatchers.withoutPosition;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.mockito.Mockito.mock;
@@ -34,27 +49,27 @@ import static org.mockito.Mockito.verify;
 
 public class ExecutionBuilderTest {
 	private Iface mock = mock(Iface.class);
-	private ExecutionBuilder builderUnderTest = new ExecutionBuilder(mock, Priority.Low);
+	private ExecutionBuilder builderUnderTest = new ExecutionBuilder(mock, Low);
 	private ArgumentCaptor<ExecuteOperations> executeOperationsCapture =
 		ArgumentCaptor.forClass(ExecuteOperations.class);
 
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnAddWithoutDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.add(1, 2, 3, true).execute();
+		builderUnderTest.add(1, 2, 3, OUTGOING).execute();
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Add),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withPosition(3),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withoutDestinationIds()
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Add),
+					withSourceId(1),
+					withGraphId(2),
+					withPosition(3),
+					withForward(true),
+					withoutDestinationIds()
 				)
 			)
 		));
@@ -62,21 +77,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnAddWithDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.add(1, 2, 3, true, 4, 5, 6).execute();
+		builderUnderTest.add(1, 2, 3, OUTGOING, 4, 5, 6).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Add),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withPosition(3),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withDestinationIds(4L, 5L, 6L)
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Add),
+					withSourceId(1),
+					withGraphId(2),
+					withPosition(3),
+					withForward(true),
+					withDestinationIds(4L, 5L, 6L)
 				)
 			)
 		));
@@ -84,21 +99,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnRemoveWithoutDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.remove(1, 2, true).execute();
+		builderUnderTest.remove(1, 2, OUTGOING).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Remove),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withoutDestinationIds()
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Remove),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withoutDestinationIds()
 				)
 			)
 		));
@@ -106,21 +121,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnRemoveWithDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.remove(1, 2, true, 4, 5, 6).execute();
+		builderUnderTest.remove(1, 2, OUTGOING, 4, 5, 6).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Remove),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withDestinationIds(4L, 5L, 6L)
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Remove),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withDestinationIds(4L, 5L, 6L)
 				)
 			)
 		));
@@ -128,21 +143,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnNegateWithoutDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.negate(1, 2, true).execute();
+		builderUnderTest.negate(1, 2, OUTGOING).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Negate),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withoutDestinationIds()
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Negate),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withoutDestinationIds()
 				)
 			)
 		));
@@ -150,21 +165,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnNegateWithDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.negate(1, 2, true, 4, 5, 6).execute();
+		builderUnderTest.negate(1, 2, OUTGOING, 4, 5, 6).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Negate),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withDestinationIds(4L, 5L, 6L)
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Negate),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withDestinationIds(4L, 5L, 6L)
 				)
 			)
 		));
@@ -172,21 +187,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnArchiveWithoutDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.archive(1, 2, true).execute();
+		builderUnderTest.archive(1, 2, OUTGOING).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Archive),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withoutDestinationIds()
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Archive),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withoutDestinationIds()
 				)
 			)
 		));
@@ -194,21 +209,21 @@ public class ExecutionBuilderTest {
 
 	@Test
 	public void callsFlockDbWithCorrectQueryOnArchiveWithDestinationIds() throws FlockException, TException, IOException {
-		builderUnderTest.archive(1, 2, true, 4, 5, 6).execute();
+		builderUnderTest.archive(1, 2, OUTGOING, 4, 5, 6).execute();
 
 		verify(mock).execute(executeOperationsCapture.capture());
 		ExecuteOperations executeOperations = executeOperationsCapture.getValue();
 
 		assertThat(executeOperations, allOf(
-			ExecutionMatchers.hasPriority(Priority.Low),
-			ExecutionMatchers.hasOperations(
-				ExecutionMatchers.anOperation(
-					ExecutionMatchers.withType(ExecuteOperationType.Archive),
-					ExecutionMatchers.withSourceId(1),
-					ExecutionMatchers.withGraphId(2),
-					ExecutionMatchers.withoutPosition(),
-					ExecutionMatchers.withForward(true),
-					ExecutionMatchers.withDestinationIds(4L, 5L, 6L)
+			hasPriority(Low),
+			hasOperations(
+				anOperation(
+					withType(Archive),
+					withSourceId(1),
+					withGraphId(2),
+					withoutPosition(),
+					withForward(true),
+					withDestinationIds(4L, 5L, 6L)
 				)
 			)
 		));

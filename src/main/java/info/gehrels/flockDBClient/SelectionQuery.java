@@ -38,14 +38,14 @@ public class SelectionQuery {
 		return selectOperations;
 	}
 
-	public static SelectionQuery simpleSelection(long sourceId, int graphId, boolean isForward,
+	public static SelectionQuery simpleSelection(long sourceId, int graphId, Direction direction,
 	                                             long... destinationIds) {
 		ByteBuffer buf = ByteHelper.asByteBufferOrNull(destinationIds);
 
 		return new SelectionQuery(
 			singletonList(
 				new SelectOperation(SelectOperationType.SimpleQuery).setTerm(
-					new QueryTerm(sourceId, graphId, isForward).setDestination_ids(buf))));
+					new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(buf))));
 	}
 
 	public static SelectionQuery intersect(SelectionQuery selectionQuery1, SelectionQuery selectionQuery2) {

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.twitter.flockdb.thrift.SelectOperationType.SimpleQuery;
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectOperation;
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectQuery;
 import static info.gehrels.flockDBClient.SelectMatchers.withOperations;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.verify;
 
 public class PagedNodeIdListTest {
 	private Iface backingFlockClient = mock(Iface.class);
-	private SelectQuery selectQuery = new SelectQuery(simpleSelection(1, 2, true).getSelectOperations(),
+	private SelectQuery selectQuery = new SelectQuery(simpleSelection(1, 2, OUTGOING).getSelectOperations(),
 	                                                  new Page(10, 12));
 
 	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);

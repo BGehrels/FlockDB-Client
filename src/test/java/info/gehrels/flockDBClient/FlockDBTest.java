@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.anEdgeQuery;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withDestinationIds;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withForward;
@@ -95,7 +96,7 @@ public class FlockDBTest {
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSelectionQueryOnSelect() throws IOException,
 		FlockException {
-		SelectionQuery firstQuery = simpleSelection(1, 2, true);
+		SelectionQuery firstQuery = simpleSelection(1, 2, OUTGOING);
 		SelectBuilder builder = new FlockDB(backingFlockMock).select(firstQuery);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
@@ -114,7 +115,7 @@ public class FlockDBTest {
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSelectionQueryOnSelectWithPaging() throws IOException,
 		FlockException {
-		SelectionQuery firstQuery = simpleSelection(1, 2, true);
+		SelectionQuery firstQuery = simpleSelection(1, 2, OUTGOING);
 		SelectBuilder builder = new FlockDB(backingFlockMock).select(firstQuery, 10);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
@@ -133,7 +134,7 @@ public class FlockDBTest {
 
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnCount() throws IOException, FlockException {
-		SelectionQuery selectionQuery = simpleSelection(1, 2, true);
+		SelectionQuery selectionQuery = simpleSelection(1, 2, OUTGOING);
 		CountBuilder builder = new FlockDB(backingFlockMock).count(selectionQuery);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
@@ -146,7 +147,7 @@ public class FlockDBTest {
 
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnSelectEdge() throws IOException, FlockException {
-		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,true, 4, 3);
+		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2, OUTGOING, 4, 3);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),
@@ -164,7 +165,7 @@ public class FlockDBTest {
 
 	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnSelectEdgeWithPaging() throws IOException, FlockException {
-		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,20,true, 4, 3, 2, 1);
+		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,20, OUTGOING, 4, 3, 2, 1);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),

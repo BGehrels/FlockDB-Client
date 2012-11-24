@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.anEdgeQuery;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withCursor;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withDestinationIds;
@@ -66,7 +67,7 @@ public class EdgeSelectionBuilderTest {
 	public void executesCorrectQueryAndReturnsResultsOnSelectEdge() throws IOException,
 		FlockException, TException {
 		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
-		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, true, 4, 3).execute();
+		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, OUTGOING, 4, 3).execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
@@ -90,7 +91,7 @@ public class EdgeSelectionBuilderTest {
 	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPaging() throws IOException, FlockException,
 		TException {
 		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
-		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, 20, true, 4, 3, 2, 1).execute();
+		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, 20, OUTGOING, 4, 3, 2, 1).execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 

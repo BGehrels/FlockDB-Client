@@ -22,6 +22,7 @@ import static com.twitter.flockdb.thrift.SelectOperationType.Difference;
 import static com.twitter.flockdb.thrift.SelectOperationType.Intersection;
 import static com.twitter.flockdb.thrift.SelectOperationType.SimpleQuery;
 import static com.twitter.flockdb.thrift.SelectOperationType.Union;
+import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.SelectMatchers.aSelectOperation;
 import static info.gehrels.flockDBClient.SelectMatchers.withForward;
 import static info.gehrels.flockDBClient.SelectMatchers.withGraphId;
@@ -38,7 +39,7 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 public class SelectionQueryTest {
 	@Test
 	public void constructsCorrectSimpleSelectionWithoutDestinationIds() {
-		SelectionQuery selectionQuery = simpleSelection(1, 2, true);
+		SelectionQuery selectionQuery = simpleSelection(1, 2, OUTGOING);
 
 		assertThat(selectionQuery.getSelectOperations(),
 		           contains(
@@ -54,7 +55,7 @@ public class SelectionQueryTest {
 
 	@Test
 	public void constructsCorrectSimpleSelectionWithDestinationIds() {
-		SelectionQuery selectionQuery = simpleSelection(1, 2, true, 2, 3, 4, 5);
+		SelectionQuery selectionQuery = simpleSelection(1, 2, OUTGOING, 2, 3, 4, 5);
 
 		assertThat(selectionQuery.getSelectOperations(),
 		           contains(
@@ -71,8 +72,8 @@ public class SelectionQueryTest {
 
 	@Test
 	public void constructsCorrectIntersection() {
-		SelectionQuery selectionQuery1 = simpleSelection(1, 2, true);
-		SelectionQuery selectionQuery2 = simpleSelection(1, 3, true);
+		SelectionQuery selectionQuery1 = simpleSelection(1, 2, OUTGOING);
+		SelectionQuery selectionQuery2 = simpleSelection(1, 3, OUTGOING);
 		SelectionQuery selectionQuery = intersect(selectionQuery1, selectionQuery2);
 
 		assertThat(selectionQuery.getSelectOperations(),
@@ -89,8 +90,8 @@ public class SelectionQueryTest {
 
 	@Test
 	public void constructsCorrectUnion() {
-		SelectionQuery selectionQuery1 = simpleSelection(1, 2, true);
-		SelectionQuery selectionQuery2 = simpleSelection(1, 3, true);
+		SelectionQuery selectionQuery1 = simpleSelection(1, 2, OUTGOING);
+		SelectionQuery selectionQuery2 = simpleSelection(1, 3, OUTGOING);
 		SelectionQuery selectionQuery = union(selectionQuery1, selectionQuery2);
 
 		assertThat(selectionQuery.getSelectOperations(),
@@ -107,8 +108,8 @@ public class SelectionQueryTest {
 
 	@Test
 	public void constructsCorrectDifference() {
-		SelectionQuery selectionQuery1 = simpleSelection(1, 2, true);
-		SelectionQuery selectionQuery2 = simpleSelection(1, 3, true);
+		SelectionQuery selectionQuery1 = simpleSelection(1, 2, OUTGOING);
+		SelectionQuery selectionQuery2 = simpleSelection(1, 3, OUTGOING);
 		SelectionQuery selectionQuery = difference(selectionQuery1, selectionQuery2);
 
 		assertThat(selectionQuery.getSelectOperations(),

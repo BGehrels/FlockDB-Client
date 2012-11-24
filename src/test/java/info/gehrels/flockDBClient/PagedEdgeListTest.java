@@ -76,7 +76,7 @@ public class PagedEdgeListTest {
 	@Test
 	public void hasNoPreviousPageForMinusOneAsCurrentCursor() {
 		EdgeResults results = new EdgeResults(new ArrayList<Edge>(), 0, -2);
-		EdgeQuery edgeQuery = new EdgeQuery(term, new Page(15, -1));
+		EdgeQuery edgeQuery = new EdgeQuery(term, new Page(15, 0));
 
 		PagedEdgeList list = new PagedEdgeList(backingFlockClient, edgeQuery, results);
 

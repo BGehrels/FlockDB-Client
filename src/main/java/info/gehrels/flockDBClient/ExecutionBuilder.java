@@ -42,41 +42,41 @@ public class ExecutionBuilder {
 		this.priority = priority;
 	}
 
-	public ExecutionBuilder add(long sourceId, int graphId, long position, boolean forward, long... destinationIds) {
+	public ExecutionBuilder add(long sourceId, int graphId, long position, Direction direction, long... destinationIds) {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Add,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			).setPosition(position)
 		);
 		return this;
 	}
 
-	public ExecutionBuilder remove(long sourceId, int graphId, boolean forward, long... destinationIds) {
+	public ExecutionBuilder remove(long sourceId, int graphId, Direction direction, long... destinationIds) {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Remove,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
 	}
 
-	public ExecutionBuilder negate(long sourceId, int graphId, boolean forward, long... destinationIds) {
+	public ExecutionBuilder negate(long sourceId, int graphId, Direction direction, long... destinationIds) {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Negate,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
 	}
 
-	public ExecutionBuilder archive(long sourceId, int graphId, boolean forward, long... destinationIds) {
+	public ExecutionBuilder archive(long sourceId, int graphId, Direction direction, long... destinationIds) {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Archive,
-				new QueryTerm(sourceId, graphId, forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;

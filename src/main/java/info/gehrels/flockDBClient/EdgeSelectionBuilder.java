@@ -40,14 +40,14 @@ public class EdgeSelectionBuilder {
 		this.backingFlockClient = backingFlockClient;
 	}
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long... destinationIds) {
-		return selectEdges(sourceId, graphId, Integer.MAX_VALUE-1, forward, destinationIds);
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction, long... destinationIds) {
+		return selectEdges(sourceId, graphId, Integer.MAX_VALUE-1, direction, destinationIds);
 	}
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward,
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, Direction direction,
 	                                        long... destinationIds) {
 		ByteBuffer buffy = asByteBufferOrNull(destinationIds);
-		QueryTerm term = new QueryTerm(sourceId, graphId, forward).setDestination_ids(buffy);
+		QueryTerm term = new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(buffy);
 		this.queries.add(new EdgeQuery(term, new Page(maxResults, -1)));
 		return this;
 	}

@@ -100,12 +100,12 @@ public class FlockDB {
         return new CountBuilder(backingFlockClient).count(selectionQuery);
     }
 
-    public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, boolean forward, long... destinationIds) throws FlockException, IOException {
-        return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, forward, destinationIds);
+    public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction, long... destinationIds) throws FlockException, IOException {
+        return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, direction, destinationIds);
     }
 
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, boolean forward, long... destinationIds) throws FlockException, IOException {
-     return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, maxResults, forward, destinationIds);
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, Direction direction, long... destinationIds) throws FlockException, IOException {
+     return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, maxResults, direction, destinationIds);
  }
 
     public ExecutionBuilder batchExecution(Priority priority) throws FlockException, IOException {
