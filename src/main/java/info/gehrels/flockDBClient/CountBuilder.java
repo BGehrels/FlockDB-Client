@@ -29,7 +29,7 @@ import java.util.List;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
-final class CountBuilder {
+public final class CountBuilder {
     private final Iface backingFlockClient;
 	private List<List<SelectOperation>> queries = new ArrayList<>();
 

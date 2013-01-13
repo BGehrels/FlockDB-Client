@@ -97,7 +97,7 @@ public class FlockDBTest {
 	public void returnsBuilderWithReferenceToBackingClientAndSelectionQueryOnSelect() throws IOException,
 		FlockException {
 		SelectionQuery firstQuery = simpleSelection(1, 2, OUTGOING);
-		SelectBuilder builder = new FlockDB(backingFlockMock).select(firstQuery);
+		SelectionBuilder builder = new FlockDB(backingFlockMock).select(firstQuery);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),
@@ -116,7 +116,7 @@ public class FlockDBTest {
 	public void returnsBuilderWithReferenceToBackingClientAndSelectionQueryOnSelectWithPaging() throws IOException,
 		FlockException {
 		SelectionQuery firstQuery = simpleSelection(1, 2, OUTGOING);
-		SelectBuilder builder = new FlockDB(backingFlockMock).select(firstQuery, 10);
+		SelectionBuilder builder = new FlockDB(backingFlockMock).select(firstQuery).withPageSize(10);
 
 		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
 		assertThat(builder.getQueries(),

@@ -30,22 +30,32 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class SelectBuilder {
+public class SelectionBuilder {
 	private final Iface backingFlockClient;
 	private List<SelectQuery> queries;
 
-	SelectBuilder(Iface backingFlockClient, SelectQuery... queries) {
+	SelectionBuilder(Iface backingFlockClient, SelectQuery... queries) {
 		this.backingFlockClient = backingFlockClient;
 		this.queries = new ArrayList<>(asList(queries));
 	}
 
-	public SelectBuilder select(SelectionQuery firstQuery) {
+	public SelectionBuilder select(SelectionQuery firstQuery) {
 		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(Integer.MAX_VALUE-1, -1)));
+
 		return this;
 	}
 
-	public SelectBuilder select(SelectionQuery firstQuery, int maxResults) {
-		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(maxResults, -1)));
+	public SelectionBuilder withPageSize(int maxResults) {
+		SelectQuery lastAddedQuery = getLastAddedQuery();
+		lastAddedQuery.setPage(new Page(maxResults, lastAddedQuery.getPage().getCursor()));
+
+		return this;
+	}
+
+	public SelectionBuilder withPageStartNode(long nodeId) {
+		SelectQuery lastAddedQuery = getLastAddedQuery();
+		lastAddedQuery.setPage(new Page(lastAddedQuery.getPage().getCount(), nodeId));
+
 		return this;
 	}
 
@@ -71,5 +81,9 @@ public class SelectBuilder {
 
 	List<SelectQuery> getQueries() {
 		return queries;
+	}
+
+	private SelectQuery getLastAddedQuery() {
+		return queries.get(queries.size() - 1);
 	}
 }

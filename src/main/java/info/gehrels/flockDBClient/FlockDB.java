@@ -88,13 +88,9 @@ public class FlockDB {
         }
     }
 
-    public SelectBuilder select(SelectionQuery firstQuery) throws FlockException, IOException {
-        return new SelectBuilder(backingFlockClient).select(firstQuery);
+    public SelectionBuilder select(SelectionQuery firstQuery) throws FlockException, IOException {
+        return new SelectionBuilder(backingFlockClient).select(firstQuery);
     }
-
-	public SelectBuilder select(SelectionQuery firstQuery, int maxResults) throws FlockException, IOException {
-     return new SelectBuilder(backingFlockClient).select(firstQuery, maxResults);
- }
 
     public CountBuilder count(SelectionQuery selectionQuery) throws FlockException, IOException {
         return new CountBuilder(backingFlockClient).count(selectionQuery);
