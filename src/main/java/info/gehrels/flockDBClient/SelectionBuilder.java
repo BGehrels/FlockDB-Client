@@ -28,15 +28,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 public class SelectionBuilder {
 	private final Iface backingFlockClient;
-	private List<SelectQuery> queries;
+	private List<SelectQuery> queries = new ArrayList<>();
 
-	SelectionBuilder(Iface backingFlockClient, SelectQuery... queries) {
+	SelectionBuilder(Iface backingFlockClient) {
 		this.backingFlockClient = backingFlockClient;
-		this.queries = new ArrayList<>(asList(queries));
 	}
 
 	public SelectionBuilder select(SelectionQuery firstQuery) {
