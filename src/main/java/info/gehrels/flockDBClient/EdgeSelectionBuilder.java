@@ -41,23 +41,24 @@ public class EdgeSelectionBuilder {
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction, long... destinationIds) {
-		return selectEdges(sourceId, graphId, Integer.MAX_VALUE-1, direction, destinationIds);
-	}
-
-	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, int maxResults, Direction direction,
-	                                        long... destinationIds) {
 		ByteBuffer buffy = asByteBufferOrNull(destinationIds);
 		QueryTerm term = new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(buffy);
-		this.queries.add(new EdgeQuery(term, new Page(maxResults, -1)));
+		this.queries.add(new EdgeQuery(term, new Page(Integer.MAX_VALUE-1, -1)));
 		return this;
 	}
 
-	Iface getBackingFlockClient() {
-		return backingFlockClient;
+	public EdgeSelectionBuilder withPageSize(int maxResults) {
+		EdgeQuery lastAddedQuery = getLastAddedQuery();
+		lastAddedQuery.setPage(new Page(maxResults, lastAddedQuery.getPage().getCursor()));
+
+		return this;
 	}
 
-	List<EdgeQuery> getQueries() {
-		return queries;
+	public EdgeSelectionBuilder withPageStartNode(long nodeId) {
+		EdgeQuery lastAddedQuery = getLastAddedQuery();
+		lastAddedQuery.setPage(new Page(lastAddedQuery.getPage().getCount(), nodeId));
+
+		return this;
 	}
 
 	public List<PagedEdgeList> execute() throws IOException, FlockException {
@@ -74,5 +75,17 @@ public class EdgeSelectionBuilder {
 			result.add(new PagedEdgeList(backingFlockClient, this.queries.get(i), rawResults.get(i)));
 		}
 		return result;
+	}
+
+	private EdgeQuery getLastAddedQuery() {
+		return queries.get(queries.size() - 1);
+	}
+
+	Iface getBackingFlockClient() {
+		return backingFlockClient;
+	}
+
+	List<EdgeQuery> getQueries() {
+		return queries;
 	}
 }

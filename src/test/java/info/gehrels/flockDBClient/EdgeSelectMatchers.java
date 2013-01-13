@@ -19,6 +19,8 @@ package info.gehrels.flockDBClient;
 import com.twitter.flockdb.thrift.EdgeQuery;
 import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import static info.gehrels.flockDBClient.PrimitiveMatchers.isLongArray;
@@ -27,11 +29,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class EdgeSelectMatchers {
 	static TypeSafeDiagnosingMatcher<EdgeQuery> anEdgeQuery(
-		final TypeSafeDiagnosingMatcher<EdgeQuery>... subMatchers) {
+		final Matcher<EdgeQuery>... subMatchers) {
 		return new TypeSafeDiagnosingMatcher<EdgeQuery>() {
 			@Override
 			protected boolean matchesSafely(EdgeQuery edegQueries, Description mismatchDescription) {
-				for (TypeSafeDiagnosingMatcher<EdgeQuery> matcher : subMatchers) {
+				for (Matcher<EdgeQuery> matcher : subMatchers) {
 					if (!matcher.matches(edegQueries)) {
 						mismatchDescription.appendText("an EdgeQuery[");
 						matcher.describeMismatch(edegQueries, mismatchDescription);
@@ -46,7 +48,7 @@ public class EdgeSelectMatchers {
 			public void describeTo(Description description) {
 				description.appendText("a SelectOperation[");
 				boolean first = true;
-				for (TypeSafeDiagnosingMatcher<EdgeQuery> subMatcher : subMatchers) {
+				for (Matcher<EdgeQuery> subMatcher : subMatchers) {
 					if (first) {
 						first = false;
 					} else {
@@ -110,6 +112,15 @@ public class EdgeSelectMatchers {
 			@Override
 			protected Integer featureValueOf(EdgeQuery actual) {
 				return actual.getPage().getCount();
+			}
+		};
+	}
+
+	static Matcher<EdgeQuery> withoutDestinationIds() {
+		return new FeatureMatcher<EdgeQuery, Boolean>(Matchers.is(false), "has destination ids", "has destination ids") {
+			@Override
+			protected Boolean featureValueOf(EdgeQuery actual) {
+				return actual.getTerm().isSetDestination_ids();
 			}
 		};
 	}

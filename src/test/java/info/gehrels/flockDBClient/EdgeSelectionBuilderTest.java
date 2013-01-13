@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static info.gehrels.flockDBClient.Direction.INCOMING;
 import static info.gehrels.flockDBClient.Direction.OUTGOING;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.anEdgeQuery;
 import static info.gehrels.flockDBClient.EdgeSelectMatchers.withCursor;
@@ -53,27 +54,27 @@ public class EdgeSelectionBuilderTest {
 	private Iface backingFlockMock = mock(Iface.class);
 	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
 	private EdgeSelectionBuilder edgeSelectionBuilder = new EdgeSelectionBuilder(backingFlockMock);
-	public List<EdgeResults> stubResults;
+	private List<EdgeResults> stubResults;
 	private Edge stubEdge;
 
 	@Before
-	public void createStubResults() {
+	public void createStubResults() throws TException, FlockException {
 		stubResults = new ArrayList<>();
 		stubEdge = mock(Edge.class);
 		stubResults.add(new EdgeResults(asList(stubEdge), 0, -1));
+		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
 	}
 
 	@Test
-	public void executesCorrectQueryAndReturnsResultsOnSelectEdge() throws IOException,
+	public void executesCorrectQueryAndReturnsResultsWithoutPaging() throws IOException,
 		FlockException, TException {
-		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
-		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, OUTGOING, 4, 3).execute();
+		List<PagedEdgeList> results = edgeSelectionBuilder
+			.selectEdges(1, 2, OUTGOING, 4, 3)
+			.selectEdges(5, 6, INCOMING)
+			.execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
-		assertThat(results,
-		           contains(
-			           pagedEdgeListWithElements(contains(sameInstance(stubEdge)))));
 		assertThat((List<EdgeQuery>) captor.getValue(),
 		           contains(
 			           anEdgeQuery(
@@ -82,35 +83,113 @@ public class EdgeSelectionBuilderTest {
 				           withForward(true),
 				           withDestinationIds(4L, 3L),
 				           withCursor(-1)
+			           ),
+			           anEdgeQuery(
+				           withSourceId(5),
+				           withGraphId(6),
+				           withForward(false),
+				           EdgeSelectMatchers.withoutDestinationIds(),
+				           withCursor(-1)
 			           )
 		           )
 		);
+
+		verifyCorrectResult(results);
 	}
 
 	@Test
-	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPaging() throws IOException, FlockException,
+	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPageSize() throws IOException, FlockException,
 		TException {
-		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
-		List<PagedEdgeList> results = edgeSelectionBuilder.selectEdges(1, 2, 20, OUTGOING, 4, 3, 2, 1).execute();
+		List<PagedEdgeList> results = edgeSelectionBuilder
+			.selectEdges(1, 2, OUTGOING).withPageSize(20)
+			.selectEdges(3, 4, INCOMING).withPageSize(30)
+			.execute();
 
 		verify(backingFlockMock).select_edges(captor.capture());
 
 
-		assertThat(results,
-		           contains(
-			           pagedEdgeListWithElements(contains(sameInstance(stubEdge)))));
 		assertThat((List<EdgeQuery>) captor.getValue(),
 		           contains(
 			           anEdgeQuery(
 				           withSourceId(1),
-				           withGraphId(2),
-				           withForward(true),
-				           withDestinationIds(4L, 3L, 2L, 1L),
 				           withCursor(-1),
 				           withMaxResults(20)
+			           ),
+			           anEdgeQuery(
+				           withSourceId(3),
+				           withCursor(-1),
+				           withMaxResults(30)
 			           )
 		           )
 		);
+
+		verifyCorrectResult(results);
+	}
+
+	@Test
+	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithPageStartNode() throws IOException, FlockException,
+		TException {
+		List<PagedEdgeList> results =
+			edgeSelectionBuilder
+				.selectEdges(1, 2, OUTGOING).withPageStartNode(20)
+				.selectEdges(2, 3, OUTGOING).withPageStartNode(30)
+				.execute();
+
+		verify(backingFlockMock).select_edges(captor.capture());
+
+
+		assertThat((List<EdgeQuery>) captor.getValue(),
+		           contains(
+			           anEdgeQuery(
+				           withSourceId(1),
+				           withCursor(20),
+				           withMaxResults(Integer.MAX_VALUE - 1)
+			           ),
+			           anEdgeQuery(
+				           withSourceId(2),
+				           withCursor(30),
+				           withMaxResults(Integer.MAX_VALUE - 1)
+			           )
+		           )
+		);
+
+		verifyCorrectResult(results);
+	}
+
+	@Test
+	public void executesCorrectQueryAndReturnsResultsOnSelectEdgeWithBothPagingOptions() throws IOException, FlockException,
+		TException {
+		List<PagedEdgeList> results =
+			edgeSelectionBuilder
+				.selectEdges(1, 2, OUTGOING).withPageStartNode(20).withPageSize(100)
+				.selectEdges(2, 3, OUTGOING).withPageSize(200).withPageStartNode(30)
+				.execute();
+
+		verify(backingFlockMock).select_edges(captor.capture());
+
+
+		assertThat((List<EdgeQuery>) captor.getValue(),
+		           contains(
+			           anEdgeQuery(
+				           withSourceId(1),
+				           withCursor(20),
+				           withMaxResults(100)
+			           ),
+			           anEdgeQuery(
+				           withSourceId(2),
+				           withCursor(30),
+				           withMaxResults(200)
+			           )
+		           )
+		);
+
+		verifyCorrectResult(results);
+	}
+
+	private void verifyCorrectResult(List<PagedEdgeList> results) {
+		assertThat(results,
+		           contains(
+			           pagedEdgeListWithElements(contains(sameInstance(stubEdge)))));
 	}
 
 	private Matcher<PagedEdgeList> pagedEdgeListWithElements(

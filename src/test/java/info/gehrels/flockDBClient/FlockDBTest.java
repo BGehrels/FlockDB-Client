@@ -164,25 +164,6 @@ public class FlockDBTest {
 	}
 
 	@Test
-	public void returnsBuilderWithReferenceToBackingClientAndSavedQueryOnSelectEdgeWithPaging() throws IOException, FlockException {
-		EdgeSelectionBuilder builder = new FlockDB(backingFlockMock).selectEdges(1,2,20, OUTGOING, 4, 3, 2, 1);
-
-		assertThat(builder.getBackingFlockClient(), is(sameInstance(backingFlockMock)));
-		assertThat(builder.getQueries(),
-		           contains(
-			           anEdgeQuery(
-				           withSourceId(1),
-			               withGraphId(2),
-			               withForward(true),
-			               withDestinationIds(4L, 3L, 2L, 1L),
-			               EdgeSelectMatchers.withCursor(-1),
-			               EdgeSelectMatchers.withMaxResults(20)
-			           )
-		           )
-		);
-	}
-
-	@Test
 	public void returnsBuilderWithReferenceToBackingClientAndSavedPriorityOnExecute() throws IOException, FlockException, TException {
 		ExecutionBuilder builder = new FlockDB(backingFlockMock).batchExecution(Priority.High);
 
