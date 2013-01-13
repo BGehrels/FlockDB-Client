@@ -25,7 +25,9 @@ limitations under the License.
 	<packaging>jar</packaging>
 
 	<name>Java FlockDB Client</name>
-	<description>A lightweight Wrapper around the Thrift API of FlockDB, providing fluent interface bases access.
+	<description>
+		A lightweight, idiomatic Java wrapper around the Thrift API of FlockDB, providing fluent interface based access.
+		You may call it kind of a FlockDB Java driver.
 	</description>
 	<url>https://github.com/BGehrels/FlockDBClient</url>
 
