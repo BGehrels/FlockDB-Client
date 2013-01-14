@@ -22,12 +22,15 @@ import com.twitter.flockdb.thrift.EdgeQuery;
 import com.twitter.flockdb.thrift.EdgeResults;
 import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
 
 public class PagedEdgeList implements Iterable<Edge> {
 	private final Iface backingFlockClient;
@@ -40,12 +43,12 @@ public class PagedEdgeList implements Iterable<Edge> {
 		this.results = results;
 	}
 
-	public PagedEdgeList getNextPage() throws FlockException, IOException{
+	public PagedEdgeList getNextPage() throws IOException {
 		return getOtherPage(results.next_cursor);
 	}
 
 
-	public PagedEdgeList getPreviousPage() throws FlockException, IOException {
+	public PagedEdgeList getPreviousPage() throws IOException {
 		return getOtherPage(results.prev_cursor);
 
 	}
@@ -58,20 +61,20 @@ public class PagedEdgeList implements Iterable<Edge> {
 		return edgeQuery.getPage().getCursor() != 0;
 	}
 
-	private PagedEdgeList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
-		EdgeQuery nextPageQuery = edgeQuery.setPage(edgeQuery.getPage().setCursor(otherPagesCursor));
-		List<EdgeResults> results;
-		try {
-			results = backingFlockClient.select_edges(Collections.singletonList(nextPageQuery));
-		} catch (TException e) {
-			throw new IOException(e);
-		}
-		return new PagedEdgeList(backingFlockClient, nextPageQuery, results.get(0));
-	}
-
-
 	@Override
 	public Iterator<Edge> iterator() {
 		return this.results.getEdges().iterator();
+	}
+
+
+	private PagedEdgeList getOtherPage(final long otherPagesCursor) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<PagedEdgeList>() {
+			@Override
+			public PagedEdgeList call() throws TException, FlockException {
+				EdgeQuery nextPageQuery = edgeQuery.setPage(edgeQuery.getPage().setCursor(otherPagesCursor));
+				List<EdgeResults> results = backingFlockClient.select_edges(Collections.singletonList(nextPageQuery));
+				return new PagedEdgeList(backingFlockClient, nextPageQuery, results.get(0));
+			}
+		});
 	}
 }

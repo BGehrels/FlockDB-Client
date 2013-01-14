@@ -22,22 +22,25 @@ import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Page;
 import com.twitter.flockdb.thrift.Results;
 import com.twitter.flockdb.thrift.SelectQuery;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
+
 public class SelectionBuilder {
 	private final Iface backingFlockClient;
-	private List<SelectQuery> queries = new ArrayList<>();
+	private final List<SelectQuery> queries = new ArrayList<>();
 
 	SelectionBuilder(Iface backingFlockClient) {
 		this.backingFlockClient = backingFlockClient;
 	}
 
 	public SelectionBuilder select(SelectionQuery firstQuery) {
-		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(Integer.MAX_VALUE-1, -1)));
+		this.queries.add(new SelectQuery(firstQuery.getSelectOperations(), new Page(Integer.MAX_VALUE - 1, -1)));
 
 		return this;
 	}
@@ -56,17 +59,21 @@ public class SelectionBuilder {
 		return this;
 	}
 
-	public List<PagedNodeIdList> execute() throws IOException, FlockException {
-		List<PagedNodeIdList> result = new ArrayList<>();
-		List<Results> rawResults;
-		try {
-			rawResults = backingFlockClient.select2(this.queries);
-		} catch (TException e) {
-			throw new IOException(e);
-		}
+	public List<PagedNodeIdList> execute() throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<List<PagedNodeIdList>>() {
+			@Override
+			public List<PagedNodeIdList> call() throws TException, FlockException {
+				return tryToExecute();
+			}
+		});
+	}
 
-		for (int i =0; i < rawResults.size(); i++) {
-			result.add(new PagedNodeIdList(backingFlockClient, this.queries.get(i), rawResults.get(i)));
+	private List<PagedNodeIdList> tryToExecute() throws FlockException, TException {
+		List<PagedNodeIdList> result = new ArrayList<>();
+		List<Results> rawResults = backingFlockClient.select2(queries);
+
+		for (int i = 0; i < rawResults.size(); i++) {
+			result.add(new PagedNodeIdList(backingFlockClient, queries.get(i), rawResults.get(i)));
 		}
 
 		return result;

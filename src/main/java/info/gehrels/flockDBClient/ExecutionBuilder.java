@@ -24,6 +24,7 @@ import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Priority;
 import com.twitter.flockdb.thrift.QueryTerm;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
@@ -42,11 +43,13 @@ public class ExecutionBuilder {
 		this.priority = priority;
 	}
 
-	public ExecutionBuilder add(long sourceId, int graphId, long position, Direction direction, long... destinationIds) {
+	public ExecutionBuilder add(long sourceId, int graphId, long position, Direction direction,
+	                            long... destinationIds) {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Add,
-				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward)
+					.setDestination_ids(asByteBufferOrNull(destinationIds))
 			).setPosition(position)
 		);
 		return this;
@@ -56,7 +59,8 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Remove,
-				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward)
+					.setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
@@ -66,7 +70,8 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Negate,
-				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward)
+					.setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
@@ -76,18 +81,21 @@ public class ExecutionBuilder {
 		this.operations.add(
 			new ExecuteOperation(
 				ExecuteOperationType.Archive,
-				new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(asByteBufferOrNull(destinationIds))
+				new QueryTerm(sourceId, graphId, direction.forward)
+					.setDestination_ids(asByteBufferOrNull(destinationIds))
 			)
 		);
 		return this;
 	}
 
-	public void execute() throws FlockException, IOException {
-		try {
-			backingFlockClient.execute(new ExecuteOperations(operations, priority));
-		} catch (TException e) {
-			throw new IOException(e);
-		}
+	public void execute() throws IOException {
+		FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions(new MethodObject<Void>() {
+			@Override
+			public Void call() throws TException, FlockException {
+				backingFlockClient.execute(new ExecuteOperations(operations, priority));
+				return null;
+			}
+		});
 	}
 
 	Iface getBackingFlockClient() {

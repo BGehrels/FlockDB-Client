@@ -23,6 +23,7 @@ import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Metadata;
 import com.twitter.flockdb.thrift.Priority;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -33,78 +34,86 @@ import org.apache.thrift.transport.TTransportException;
 
 import java.io.IOException;
 
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
+
 public class FlockDB {
 	private TTransport transport;
 	private Iface backingFlockClient;
 
 	public FlockDB(String hostname, int port) throws IOException {
 		this(hostname, port, 1000);
-    }
+	}
 
 	public FlockDB(String hostname, int port, int timeoutInMilliSeconds) throws IOException {
 		transport = new TFramedTransport(new TSocket(hostname, port, timeoutInMilliSeconds));
-        TProtocol protocol = new TBinaryProtocol(transport);
-        try {
-            transport.open();
-        } catch (TTransportException e) {
-            throw new IOException("Opening the transport failed", e);
-        }
-        backingFlockClient = new Client(protocol);
+		TProtocol protocol = new TBinaryProtocol(transport);
+		try {
+			transport.open();
+		} catch (TTransportException e) {
+			throw new IOException("Opening the transport failed", e);
+		}
+		backingFlockClient = new Client(protocol);
 	}
 
-    FlockDB(Iface flockDbIFaceMock) {
-        backingFlockClient = flockDbIFaceMock;
-    }
+	FlockDB(Iface flockDbIFaceMock) {
+		backingFlockClient = flockDbIFaceMock;
+	}
 
-    public boolean contains(long sourceId, int graphId, long destinationId) throws FlockException, IOException {
-        try {
-            return backingFlockClient.contains(sourceId, graphId, destinationId);
-        } catch (TException e) {
-            throw new IOException(e);
-        }
-    }
+	public boolean contains(final long sourceId, final int graphId, final long destinationId) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<Boolean>() {
+			@Override
+			public Boolean call() throws TException, FlockException {
+				return backingFlockClient.contains(sourceId, graphId, destinationId);
+			}
+		});
+	}
 
-    public Edge get(long sourceId, int graphId, long destinationId) throws FlockException, IOException {
-        try {
-            return backingFlockClient.get(sourceId, graphId, destinationId);
-        } catch (TException e) {
-            throw new IOException(e);
-        }
-    }
+	public Edge get(final long sourceId, final int graphId, final long destinationId) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<Edge>() {
+			@Override
+			public Edge call() throws TException, FlockException {
+				return backingFlockClient.get(sourceId, graphId, destinationId);
+			}
+		});
+	}
 
-    public Metadata getMetadata(long sourceId, int graphId) throws FlockException, IOException {
-        try {
-            return backingFlockClient.get_metadata(sourceId, graphId);
-        } catch (TException e) {
-            throw new IOException(e);
-        }
-    }
+	public Metadata getMetadata(final long sourceId, final int graphId) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<Metadata>() {
+			@Override
+			public Metadata call() throws TException, FlockException {
+				return backingFlockClient.get_metadata(sourceId, graphId);
+			}
+		});
+	}
 
-    public boolean containsMetadata(long sourceId, int graphId) throws FlockException, IOException {
-        try {
-            return backingFlockClient.contains_metadata(sourceId, graphId);
-        } catch (TException e) {
-            throw new IOException(e);
-        }
-    }
+	public boolean containsMetadata(final long sourceId, final int graphId) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<Boolean>() {
+			@Override
+			public Boolean call() throws TException, FlockException {
+				return backingFlockClient.contains_metadata(sourceId, graphId);
+			}
+		});
+	}
 
-    public SelectionBuilder select(SelectionQuery firstQuery) throws FlockException, IOException {
-        return new SelectionBuilder(backingFlockClient).select(firstQuery);
-    }
+	public SelectionBuilder select(SelectionQuery firstQuery) throws IOException {
+		return new SelectionBuilder(backingFlockClient).select(firstQuery);
+	}
 
-    public CountBuilder count(SelectionQuery selectionQuery) throws FlockException, IOException {
-        return new CountBuilder(backingFlockClient).count(selectionQuery);
-    }
+	public CountBuilder count(SelectionQuery selectionQuery) throws IOException {
+		return new CountBuilder(backingFlockClient).count(selectionQuery);
+	}
 
-    public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction, long... destinationIds) throws FlockException, IOException {
-        return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, direction, destinationIds);
-    }
+	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction,
+	                                        long... destinationIds) throws IOException {
+		return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, direction, destinationIds);
+	}
 
-    public ExecutionBuilder batchExecution(Priority priority) throws FlockException, IOException {
-        return new ExecutionBuilder(backingFlockClient, priority);
-    }
+	public ExecutionBuilder batchExecution(Priority priority) throws IOException {
+		return new ExecutionBuilder(backingFlockClient, priority);
+	}
 
 	public void close() {
 		transport.close();
 	}
+
 }

@@ -20,6 +20,7 @@ package info.gehrels.flockDBClient;
 import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.SelectOperation;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
@@ -27,38 +28,40 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 public final class CountBuilder {
-    private final Iface backingFlockClient;
+	private final Iface backingFlockClient;
 	private List<List<SelectOperation>> queries = new ArrayList<>();
 
 	CountBuilder(Iface backingFlockClient) {
-        this.backingFlockClient = backingFlockClient;
-    }
+		this.backingFlockClient = backingFlockClient;
+	}
 
 	public CountBuilder count(SelectionQuery selectionQuery) {
 		queries.add(selectionQuery.getSelectOperations());
 		return this;
 	}
 
-	public List<Integer> execute() throws FlockException, IOException {
-		try {
-			return createIntegerListFromByteBuffer(backingFlockClient.count2(queries));
-		} catch (TException e) {
-			throw new IOException(e);
-		}
+	public List<Integer> execute() throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<List<Integer>>() {
+			@Override
+			public List<Integer> call() throws TException, FlockException {
+				return createIntegerListFromByteBuffer(backingFlockClient.count2(queries));
+			}
+		});
 	}
 
 	List<List<SelectOperation>> getQueries() {
 		return queries;
 	}
 
-    Iface getBackingFlockClient() {
-        return backingFlockClient;
-    }
+	Iface getBackingFlockClient() {
+		return backingFlockClient;
+	}
 
-	private List<Integer> createIntegerListFromByteBuffer(ByteBuffer byteBuffer) throws FlockException, TException {
+	private List<Integer> createIntegerListFromByteBuffer(ByteBuffer byteBuffer) {
 		List<Integer> result = new ArrayList<>();
 		byteBuffer.order(LITTLE_ENDIAN);
 		while (byteBuffer.hasRemaining()) {

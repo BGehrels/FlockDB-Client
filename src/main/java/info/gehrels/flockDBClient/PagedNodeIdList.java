@@ -21,12 +21,15 @@ import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Results;
 import com.twitter.flockdb.thrift.SelectQuery;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
 
 public class PagedNodeIdList implements Iterable<Long> {
 	private final Iface backingFlockClient;
@@ -41,12 +44,12 @@ public class PagedNodeIdList implements Iterable<Long> {
 		this.ids = ByteHelper.toLongArray(results.getIds());
 	}
 
-	public PagedNodeIdList getNextPage() throws FlockException, IOException{
+	public PagedNodeIdList getNextPage() throws IOException {
 		return getOtherPage(results.next_cursor);
 	}
 
 
-	public PagedNodeIdList getPreviousPage() throws FlockException, IOException {
+	public PagedNodeIdList getPreviousPage() throws IOException {
 		return getOtherPage(results.prev_cursor);
 
 	}
@@ -59,15 +62,15 @@ public class PagedNodeIdList implements Iterable<Long> {
 		return this.selectQuery.getPage().getCursor() != -1;
 	}
 
-	private PagedNodeIdList getOtherPage(long otherPagesCursor) throws FlockException, IOException {
-		SelectQuery nextPageQuery = selectQuery.setPage(selectQuery.getPage().setCursor(otherPagesCursor));
-		List<Results> results;
-		try {
-			results = backingFlockClient.select2(Collections.singletonList(nextPageQuery));
-		} catch (TException e) {
-			throw new IOException(e);
-		}
-		return new PagedNodeIdList(backingFlockClient, nextPageQuery, results.get(0));
+	private PagedNodeIdList getOtherPage(final long otherPagesCursor) throws IOException {
+		return handleFlockAndThriftExceptions(new MethodObject<PagedNodeIdList>() {
+			@Override
+			public PagedNodeIdList call() throws TException, FlockException {
+				SelectQuery nextPageQuery = selectQuery.setPage(selectQuery.getPage().setCursor(otherPagesCursor));
+				List<Results> results = backingFlockClient.select2(Collections.singletonList(nextPageQuery));
+				return new PagedNodeIdList(backingFlockClient, nextPageQuery, results.get(0));
+			}
+		});
 	}
 
 
@@ -75,9 +78,10 @@ public class PagedNodeIdList implements Iterable<Long> {
 	public Iterator<Long> iterator() {
 		return new Iterator<Long>() {
 			int index = 0;
+
 			@Override
 			public boolean hasNext() {
-				return ids.length >= index+1;
+				return ids.length >= index + 1;
 			}
 
 			@Override

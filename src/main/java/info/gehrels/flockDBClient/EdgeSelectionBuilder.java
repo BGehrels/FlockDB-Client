@@ -23,6 +23,7 @@ import com.twitter.flockdb.thrift.FlockDB.Iface;
 import com.twitter.flockdb.thrift.FlockException;
 import com.twitter.flockdb.thrift.Page;
 import com.twitter.flockdb.thrift.QueryTerm;
+import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static info.gehrels.flockDBClient.ByteHelper.asByteBufferOrNull;
+import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
 
 public class EdgeSelectionBuilder {
 	private final Iface backingFlockClient;
@@ -43,7 +45,7 @@ public class EdgeSelectionBuilder {
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction, long... destinationIds) {
 		ByteBuffer buffy = asByteBufferOrNull(destinationIds);
 		QueryTerm term = new QueryTerm(sourceId, graphId, direction.forward).setDestination_ids(buffy);
-		this.queries.add(new EdgeQuery(term, new Page(Integer.MAX_VALUE-1, -1)));
+		this.queries.add(new EdgeQuery(term, new Page(Integer.MAX_VALUE - 1, -1)));
 		return this;
 	}
 
@@ -61,15 +63,15 @@ public class EdgeSelectionBuilder {
 		return this;
 	}
 
-	public List<PagedEdgeList> execute() throws IOException, FlockException {
+	public List<PagedEdgeList> execute() throws IOException {
 		List<PagedEdgeList> result = new ArrayList<>();
 
-		List<EdgeResults> rawResults;
-		try {
-			rawResults = backingFlockClient.select_edges(queries);
-		} catch (TException e) {
-			throw new IOException(e);
-		}
+		List<EdgeResults> rawResults = handleFlockAndThriftExceptions(new MethodObject<List<EdgeResults>>() {
+			@Override
+			public List<EdgeResults> call() throws TException, FlockException {
+				return backingFlockClient.select_edges(queries);
+			}
+		});
 
 		for (int i = 0; i < rawResults.size(); i++) {
 			result.add(new PagedEdgeList(backingFlockClient, this.queries.get(i), rawResults.get(i)));
