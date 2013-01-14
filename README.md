@@ -76,7 +76,7 @@ first thing you may want to do is adding nodes to your instance:
 		.add(4, 2, new Date().getTime(), OUTGOING, 1)
 		.execute();
 
-Will add three edges, each one labeled with the current time to graph no. 2: one from node 1 to node 3, one from node 3
+This will add three edges, each one labeled with the current time to graph no. 2: one from node 1 to node 3, one from node 3
 to node 4 and one from node 4 to node 1. Together, they form a triangle. You mach also use batch executions to remove,
 negate and archive edges or to add multiple edges at once:
 
