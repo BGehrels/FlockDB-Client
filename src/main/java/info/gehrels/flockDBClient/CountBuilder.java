@@ -23,7 +23,6 @@ import com.twitter.flockdb.thrift.SelectOperation;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public final class CountBuilder {
 		return this;
 	}
 
-	public List<Integer> execute() throws IOException {
+	public List<Integer> execute() {
 		return handleFlockAndThriftExceptions(new MethodObject<List<Integer>>() {
 			@Override
 			public List<Integer> call() throws TException, FlockException {

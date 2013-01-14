@@ -27,7 +27,6 @@ import com.twitter.flockdb.thrift.QueryTerm;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +87,7 @@ public class ExecutionBuilder {
 		return this;
 	}
 
-	public void execute() throws IOException {
+	public void execute() {
 		FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions(new MethodObject<Void>() {
 			@Override
 			public Void call() throws TException, FlockException {

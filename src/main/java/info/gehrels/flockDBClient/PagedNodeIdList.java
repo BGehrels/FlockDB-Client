@@ -24,7 +24,6 @@ import com.twitter.flockdb.thrift.SelectQuery;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -44,12 +43,12 @@ public class PagedNodeIdList implements Iterable<Long> {
 		this.ids = ByteHelper.toLongArray(results.getIds());
 	}
 
-	public PagedNodeIdList getNextPage() throws IOException {
+	public PagedNodeIdList getNextPage() {
 		return getOtherPage(results.next_cursor);
 	}
 
 
-	public PagedNodeIdList getPreviousPage() throws IOException {
+	public PagedNodeIdList getPreviousPage() {
 		return getOtherPage(results.prev_cursor);
 
 	}
@@ -62,7 +61,7 @@ public class PagedNodeIdList implements Iterable<Long> {
 		return this.selectQuery.getPage().getCursor() != -1;
 	}
 
-	private PagedNodeIdList getOtherPage(final long otherPagesCursor) throws IOException {
+	private PagedNodeIdList getOtherPage(final long otherPagesCursor) {
 		return handleFlockAndThriftExceptions(new MethodObject<PagedNodeIdList>() {
 			@Override
 			public PagedNodeIdList call() throws TException, FlockException {

@@ -59,7 +59,7 @@ public class FlockDB {
 		backingFlockClient = flockDbIFaceMock;
 	}
 
-	public boolean contains(final long sourceId, final int graphId, final long destinationId) throws IOException {
+	public boolean contains(final long sourceId, final int graphId, final long destinationId) {
 		return handleFlockAndThriftExceptions(new MethodObject<Boolean>() {
 			@Override
 			public Boolean call() throws TException, FlockException {
@@ -68,7 +68,7 @@ public class FlockDB {
 		});
 	}
 
-	public Edge get(final long sourceId, final int graphId, final long destinationId) throws IOException {
+	public Edge get(final long sourceId, final int graphId, final long destinationId) {
 		return handleFlockAndThriftExceptions(new MethodObject<Edge>() {
 			@Override
 			public Edge call() throws TException, FlockException {
@@ -77,7 +77,7 @@ public class FlockDB {
 		});
 	}
 
-	public Metadata getMetadata(final long sourceId, final int graphId) throws IOException {
+	public Metadata getMetadata(final long sourceId, final int graphId) {
 		return handleFlockAndThriftExceptions(new MethodObject<Metadata>() {
 			@Override
 			public Metadata call() throws TException, FlockException {
@@ -86,7 +86,7 @@ public class FlockDB {
 		});
 	}
 
-	public boolean containsMetadata(final long sourceId, final int graphId) throws IOException {
+	public boolean containsMetadata(final long sourceId, final int graphId) {
 		return handleFlockAndThriftExceptions(new MethodObject<Boolean>() {
 			@Override
 			public Boolean call() throws TException, FlockException {
@@ -95,20 +95,20 @@ public class FlockDB {
 		});
 	}
 
-	public SelectionBuilder select(SelectionQuery firstQuery) throws IOException {
+	public SelectionBuilder select(SelectionQuery firstQuery) {
 		return new SelectionBuilder(backingFlockClient).select(firstQuery);
 	}
 
-	public CountBuilder count(SelectionQuery selectionQuery) throws IOException {
+	public CountBuilder count(SelectionQuery selectionQuery) {
 		return new CountBuilder(backingFlockClient).count(selectionQuery);
 	}
 
 	public EdgeSelectionBuilder selectEdges(long sourceId, int graphId, Direction direction,
-	                                        long... destinationIds) throws IOException {
+	                                        long... destinationIds) {
 		return new EdgeSelectionBuilder(backingFlockClient).selectEdges(sourceId, graphId, direction, destinationIds);
 	}
 
-	public ExecutionBuilder batchExecution(Priority priority) throws IOException {
+	public ExecutionBuilder batchExecution(Priority priority) {
 		return new ExecutionBuilder(backingFlockClient, priority);
 	}
 

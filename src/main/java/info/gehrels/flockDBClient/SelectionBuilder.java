@@ -25,7 +25,6 @@ import com.twitter.flockdb.thrift.SelectQuery;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class SelectionBuilder {
 		return this;
 	}
 
-	public List<PagedNodeIdList> execute() throws IOException {
+	public List<PagedNodeIdList> execute() {
 		return handleFlockAndThriftExceptions(new MethodObject<List<PagedNodeIdList>>() {
 			@Override
 			public List<PagedNodeIdList> call() throws TException, FlockException {

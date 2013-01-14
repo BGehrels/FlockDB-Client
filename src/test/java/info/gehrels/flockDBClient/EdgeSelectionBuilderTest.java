@@ -51,17 +51,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class EdgeSelectionBuilderTest {
-	private Iface backingFlockMock = mock(Iface.class);
-	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
-	private EdgeSelectionBuilder edgeSelectionBuilder = new EdgeSelectionBuilder(backingFlockMock);
-	private List<EdgeResults> stubResults;
-	private Edge stubEdge;
+	private final Iface backingFlockMock = mock(Iface.class);
+	private final ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
+	private final EdgeSelectionBuilder edgeSelectionBuilder = new EdgeSelectionBuilder(backingFlockMock);
+	private Edge stubEdge = mock(Edge.class);
 
 	@Before
 	public void createStubResults() throws TException, FlockException {
-		stubResults = new ArrayList<>();
-		stubEdge = mock(Edge.class);
+		List<EdgeResults> stubResults = new ArrayList<>();
 		stubResults.add(new EdgeResults(asList(stubEdge), 0, -1));
+
 		doReturn(stubResults).when(backingFlockMock).select_edges(any(List.class));
 	}
 

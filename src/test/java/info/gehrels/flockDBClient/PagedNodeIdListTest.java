@@ -47,11 +47,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class PagedNodeIdListTest {
-	private Iface backingFlockClient = mock(Iface.class);
-	private SelectQuery selectQuery = new SelectQuery(simpleSelection(1, 2, OUTGOING).getSelectOperations(),
+	private final Iface backingFlockClient = mock(Iface.class);
+	private final SelectQuery selectQuery = new SelectQuery(simpleSelection(1, 2, OUTGOING).getSelectOperations(),
 	                                                  new Page(10, 12));
 
-	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
+	private final ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
 
 	@Test
 	public void returnsEmptyIteratorForEmptyResults() {

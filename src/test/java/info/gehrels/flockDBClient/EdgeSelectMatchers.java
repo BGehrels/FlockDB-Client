@@ -27,7 +27,7 @@ import static info.gehrels.flockDBClient.PrimitiveMatchers.isLongArray;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 
-public class EdgeSelectMatchers {
+class EdgeSelectMatchers {
 	static TypeSafeDiagnosingMatcher<EdgeQuery> anEdgeQuery(
 		final Matcher<EdgeQuery>... subMatchers) {
 		return new TypeSafeDiagnosingMatcher<EdgeQuery>() {

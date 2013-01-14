@@ -48,9 +48,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class ExecutionBuilderTest {
-	private Iface mock = mock(Iface.class);
-	private ExecutionBuilder builderUnderTest = new ExecutionBuilder(mock, Low);
-	private ArgumentCaptor<ExecuteOperations> executeOperationsCapture =
+	private final Iface mock = mock(Iface.class);
+	private final ExecutionBuilder builderUnderTest = new ExecutionBuilder(mock, Low);
+	private final ArgumentCaptor<ExecuteOperations> executeOperationsCapture =
 		ArgumentCaptor.forClass(ExecuteOperations.class);
 
 

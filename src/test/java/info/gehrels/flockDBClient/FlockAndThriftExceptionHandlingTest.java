@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 
 public class FlockAndThriftExceptionHandlingTest {
 
-	public static final String ARBITRARY_TEST_STRING = "arbitraryTestString";
+	private static final String ARBITRARY_TEST_STRING = "arbitraryTestString";
 
 	@Test
 	public void returnsMethodObjectsValueWhenNoExceptionOccured() throws IOException {
@@ -38,15 +38,14 @@ public class FlockAndThriftExceptionHandlingTest {
 
 	}
 
-	@Test(expected = IOException.class)
-	public void wrapsAThrownTExceptionAsAIOException() throws IOException {
+	@Test(expected = FlockDBException.class)
+	public void wrapsAThrownTExceptionAsAFlockDBException() throws IOException {
 		handleFlockAndThriftExceptions(new MethodObject<String>() {
 					@Override
 					public String call() throws TException, FlockException {
 						throw new TException();
 					}
 				});
-
 	}
 
 	@Test(expected = IllegalArgumentException.class)

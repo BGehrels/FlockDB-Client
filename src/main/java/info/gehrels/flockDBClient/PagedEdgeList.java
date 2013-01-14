@@ -25,7 +25,6 @@ import com.twitter.flockdb.thrift.FlockException;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -43,12 +42,12 @@ public class PagedEdgeList implements Iterable<Edge> {
 		this.results = results;
 	}
 
-	public PagedEdgeList getNextPage() throws IOException {
+	public PagedEdgeList getNextPage() {
 		return getOtherPage(results.next_cursor);
 	}
 
 
-	public PagedEdgeList getPreviousPage() throws IOException {
+	public PagedEdgeList getPreviousPage() {
 		return getOtherPage(results.prev_cursor);
 
 	}
@@ -67,7 +66,7 @@ public class PagedEdgeList implements Iterable<Edge> {
 	}
 
 
-	private PagedEdgeList getOtherPage(final long otherPagesCursor) throws IOException {
+	private PagedEdgeList getOtherPage(final long otherPagesCursor) {
 		return handleFlockAndThriftExceptions(new MethodObject<PagedEdgeList>() {
 			@Override
 			public PagedEdgeList call() throws TException, FlockException {

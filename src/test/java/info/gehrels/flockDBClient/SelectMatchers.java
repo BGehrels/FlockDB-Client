@@ -31,7 +31,7 @@ import static info.gehrels.flockDBClient.PrimitiveMatchers.isLongArray;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 
-public class SelectMatchers {
+class SelectMatchers {
 	static TypeSafeDiagnosingMatcher<SelectOperation> aSelectOperation(
 		final TypeSafeDiagnosingMatcher<SelectOperation>... subMatchers) {
 		return new TypeSafeDiagnosingMatcher<SelectOperation>() {

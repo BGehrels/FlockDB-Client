@@ -48,10 +48,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FlockDBTest {
-	public static final Edge ARBITRARY_EDGE = new Edge(12, 56, 123, 123, 123, 1);
+	private static final Edge ARBITRARY_EDGE = new Edge(12, 56, 123, 123, 123, 1);
 	private static final Metadata ARBITRARY_METADATA = new Metadata(123, 123, 123, 123);
 
-	private Iface backingFlockMock = mock(Iface.class);
+	private final Iface backingFlockMock = mock(Iface.class);
 
 	@Test
 	public void delegatesContainsCallsToBackingClient() throws IOException, FlockException, TException {
@@ -125,8 +125,8 @@ public class FlockDBTest {
 				           withOperations(
 					           CoreMatchers.<Iterable<? extends SelectOperation>>is(firstQuery.getSelectOperations())
 				           ),
-			               withCursor(-1),
-			               withMaxResults(10)
+				           withCursor(-1),
+				           withMaxResults(10)
 			           )
 		           )
 		);

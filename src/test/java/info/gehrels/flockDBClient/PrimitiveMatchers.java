@@ -20,7 +20,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-public class PrimitiveMatchers {
+class PrimitiveMatchers {
 	static Matcher<long[]> isLongArray(final long... expected) {
 		return new TypeSafeDiagnosingMatcher<long[]>() {
 			@Override

@@ -26,7 +26,6 @@ import com.twitter.flockdb.thrift.QueryTerm;
 import info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.MethodObject;
 import org.apache.thrift.TException;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +62,7 @@ public class EdgeSelectionBuilder {
 		return this;
 	}
 
-	public List<PagedEdgeList> execute() throws IOException {
+	public List<PagedEdgeList> execute() {
 		List<PagedEdgeList> result = new ArrayList<>();
 
 		List<EdgeResults> rawResults = handleFlockAndThriftExceptions(new MethodObject<List<EdgeResults>>() {

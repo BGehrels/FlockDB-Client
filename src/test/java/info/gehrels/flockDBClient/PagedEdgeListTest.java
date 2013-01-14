@@ -51,11 +51,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class PagedEdgeListTest {
-	private Iface backingFlockClient = mock(Iface.class);
+	private final Iface backingFlockClient = mock(Iface.class);
 	private final QueryTerm term = new QueryTerm(1, 2, true);
-	private EdgeQuery edgeQuery = new EdgeQuery(term, new Page(15, 10));
+	private final EdgeQuery edgeQuery = new EdgeQuery(term, new Page(15, 10));
 
-	private ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
+	private final ArgumentCaptor<List> captor = (ArgumentCaptor<List>) ArgumentCaptor.forClass(List.class);
 
 	@Test
 	public void returnsEmptyIteratorForEmptyResults() {

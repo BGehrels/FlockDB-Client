@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class ExecutionMatchers {
+class ExecutionMatchers {
 	static Matcher<ExecuteOperation> withoutPosition() {
 		return new FeatureMatcher<ExecuteOperation, Boolean>(is(false), "has position", "has position") {
 			@Override
