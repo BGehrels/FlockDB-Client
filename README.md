@@ -86,3 +86,23 @@ negate and archive edges or to add multiple edges at once:
 		.archive(3, 2, INCOMING, 1) // archives edge 1->3
 		.remove(1, 2, OUTGOING, 6) // removes edge 1->6
 		.execute();
+
+After filling the database you will probably want to query your data. The easiest way to do this is querying for a
+single edge:
+
+	Edge edge = myFlockConnection.get(1, 2, 3);
+
+This will return the edge 1->3 of graph no. 2 – or null, if it does not exist. If you are looking for a cheaper way to
+test, if an edge exists in the database, you can also call
+
+	boolean edgeExists = myFlockConnection.contains(1, 2, 3);
+
+If you want to retrieve a Node with some Metadata about it, you can call
+
+	Metadata nodeMetadata = myFlockConnection.getMetadata(1,2);
+
+This will return the node metadata (number of edges, et cetera) of node 1 in graph no. 2. There is also a cheaper way to
+test, if a node exists:
+
+	boolean nodeExists = myFlockConnection.containsMetadata(1,2);
+
