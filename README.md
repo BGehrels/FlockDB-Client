@@ -46,6 +46,7 @@ If you do not use Maven as your build and dependency management tool, you may do
 dependencies in your classpath. At the moment of writing this documentation, these are
 * libthrift = 0.8.0
 * Google guava >= 13.0-rc2
+
 Other versions may work, but are untested. If you tested one, please feel free to contribute your experiences to this
 README file.
 
@@ -63,23 +64,25 @@ How to use it
 -------------
 The primary entry point to the FlockDB Client is the class called `info.gehrels.flockDBClient.FlockDB`. You may simply
 instantiate it using a the hostName and the port of your running FlockDB server:
+
 	FlockDB myFlockConnection = new FlockDB("localhost", 7915);
+
 Once you have a `FlockDB`-Instance at your fingertips, you may use it for all the operations provided by the server. The
 first thing you may want to do is adding nodes to your instance:
+
 	myFlockConnection.batchExecution(Priority.Normal)
 		.add(1, 2, new Date().getTime(), OUTGOING, 3)
 		.add(3, 2, new Date().getTime(), OUTGOING, 4)
 		.add(4, 2, new Date().getTime(), OUTGOING, 1)
 		.execute();
+
 Will add three edges, each one labeled with the current time to graph no. 2: one from node 1 to node 3, one from node 3
 to node 4 and one from node 4 to node 1. Together, they form a triangle. You mach also use batch executions to remove,
 negate and archive edges or to add multiple edges at once:
+
 	myFlockConnection.batchExecution(Priority.Normal)
 		.add(1, 2, new Date().getTime(), OUTGOING, 3, 4, 5, 6) // Adds 4 edges: 1->3, 1->4, 1->5, 1->6
 		.negate(1, 2, OUTGOING, 4, 5) // negates edges 1->4, 1->5
 		.archive(3, 2, INCOMING, 1) // archives edge 1->3
 		.remove(1, 2, OUTGOING, 6) // removes edge 1->6
 		.execute();
-
-
-
