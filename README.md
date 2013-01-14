@@ -67,7 +67,7 @@ instantiate it using a the hostName and the port of your running FlockDB server:
 
 	FlockDB myFlockConnection = new FlockDB("localhost", 7915);
 
-Once you have a `FlockDB`-Instance at your fingertips, you may use it for all the operations provided by the server. The
+Once you have a `FlockDB` instance at your fingertips, you may use it for all the operations provided by the server. The
 first thing you may want to do is adding nodes to your instance:
 
 	myFlockConnection.batchExecution(Priority.Normal)
