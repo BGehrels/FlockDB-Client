@@ -23,6 +23,10 @@ import java.nio.LongBuffer;
 
 import static org.apache.commons.lang.ArrayUtils.isNotEmpty;
 
+/**
+ * Since FlockDBs Thrift API uses "binary" fields a lot to represent long[], this static helper class aims to provide
+ * some convenience helper methods to convert long[] to ByteBuffer and vice versa.
+ */
 final class ByteHelper {
 	static ByteBuffer asByteBufferOrNull(long... destinationIds) {
 		ByteBuffer buf = null;
