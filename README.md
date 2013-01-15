@@ -38,7 +38,7 @@ find this library on Maven Central. Just add the following dependency to your `p
 	<dependency>
 		<groupId>info.gehrels</groupId>
 		<artifactId>FlockDB-Client</artifactId>
-		<version>0.1</version>
+		<version>0.2</version>
 	</dependency>
 
 If you do not use Maven as your build and dependency management tool, you may download the library from
@@ -151,7 +151,24 @@ follow person A and person B and are not blocked by person C:
 		.execute();
 
 As you may guess from the return type, multiple select queries may be batched and the result may be paged in the same
-way as described above for the Edge selections.
+way as described above for the Edge selections. If you are just interested in the result count, you may use
+
+	List<Integer> result = myFlockDBConnection
+		.count(
+			difference(
+				intersect(
+					simpleSelection(personAId, FOLLOWS, INCOMING),
+					simpleSelection(personBId, FOLLOWS, INCOMING)
+				),
+				simpleSelection(personCId, BLOCKS, OUTGOING)
+			)
+		)
+		.execute();
+
+*** Closing the connection
+When you do not need the connection to FlockDB any more, you may close it to free some ressources:
+
+	myFlockDBConnection.close()
 
 What you have to be aware of
 ----------------------------
@@ -159,6 +176,17 @@ Even if this code has a quite good unit test coverage, nearly no integration tes
 really works with a real FlockDB server. So I would not suggest to use this code in a production environment without
 a lot of prior testing. If you find any errors or wrong/misleading documentation, please drop me a line or – better –
 send me a pull request.
+
+What could be done better
+-------------------------
+There are some parts of this code, that i'm not that proud of.
+* The way Paging is implemented right now distributes the responsibility for executing searches to more than one class.
+  This is not what i consider good programming practice.
+* I am not sure, if the possibility to bundle multiple search requests into one server call provides enough value to
+  justify the added API complexity.
+* Since the paging options are by default chosen in a way, that basically disables paging, it would be nice to be able
+  to get an unpaged result set.
+
 
 How to contact me
 -----------------
