@@ -165,7 +165,7 @@ way as described above for the Edge selections. If you are just interested in th
 		)
 		.execute();
 
-*** Closing the connection
+###Closing the connection
 When you do not need the connection to FlockDB any more, you may close it to free some ressources:
 
 	myFlockDBConnection.close()
