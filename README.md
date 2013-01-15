@@ -38,7 +38,7 @@ find this library on Maven Central. Just add the following dependency to your `p
 	<dependency>
 		<groupId>info.gehrels</groupId>
 		<artifactId>FlockDB-Client</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</dependency>
 
 If you do not use Maven as your build and dependency management tool, you may download the library from
