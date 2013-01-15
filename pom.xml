@@ -36,9 +36,9 @@ limitations under the License.
 	</parent>
 
 	<scm>
-		<url>https://github.com/BGehrels/FlockDBClient</url>
-		<connection>scm:git:git://github.com/BGehrels/FlockDBClient.git</connection>
-		<developerConnection>scm:git:git@github.com:BGehrels/FlockDBClient.git</developerConnection>
+		<url>https://github.com/BGehrels/FlockDB-Client</url>
+		<connection>scm:git:git://github.com/BGehrels/FlockDB-Client.git</connection>
+		<developerConnection>scm:git:git@github.com:BGehrels/FlockDB-Client.git</developerConnection>
 	</scm>
 
 	<licenses>
