@@ -164,5 +164,5 @@ How to contact me
 -----------------
 You may contact me
 * on Twitter: @BGehrels
-* per e-mail: github <at> gehrels <dot> info or
+* per e-mail: github `<at>` gehrels `<dot>` info or
 * using the "issues" feature of github
