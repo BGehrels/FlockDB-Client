@@ -33,12 +33,8 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import java.io.IOException;
-import java.util.List;
 
 import static info.gehrels.flockDBClient.FlockAndThriftExceptionHandling.handleFlockAndThriftExceptions;
-import static info.gehrels.flockDBClient.SelectionQuery.difference;
-import static info.gehrels.flockDBClient.SelectionQuery.intersect;
-import static info.gehrels.flockDBClient.SelectionQuery.simpleSelection;
 
 public class FlockDB {
 	private TTransport transport;
@@ -117,23 +113,6 @@ public class FlockDB {
 	}
 
 	public void close() {
-		long personAId=0;
-		FlockDB myFlockDBConnection = this;
-		int FOLLOWS = 1;
-		long personBId = FOLLOWS;
-		long personCId = 3;
-		int BLOCKS = 2;
-		List<PagedNodeIdList> result = myFlockDBConnection
-			.select(
-				difference(
-				intersect(
-					simpleSelection(personAId, FOLLOWS, Direction.INCOMING),
-					simpleSelection(personBId, FOLLOWS, Direction.INCOMING)
-				),
-				simpleSelection(personCId, BLOCKS, Direction.OUTGOING)
-				)
-			)
-			.execute();
 		transport.close();
 	}
 
