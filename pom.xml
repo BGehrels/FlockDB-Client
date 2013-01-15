@@ -38,7 +38,7 @@ limitations under the License.
 	<scm>
 		<url>https://github.com/BGehrels/FlockDBClient</url>
 		<connection>scm:git:git://github.com/BGehrels/FlockDBClient.git</connection>
-		<developerConnection>scm:git:git://git@github.com:BGehrels/FlockDBClient.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:BGehrels/FlockDBClient.git</developerConnection>
 	</scm>
 
 	<licenses>
