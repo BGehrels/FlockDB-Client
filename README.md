@@ -132,3 +132,30 @@ The resulting `PagedEdgeList` instances offer an `Iterator<Edge>` for the curren
 provide no page size, a default page size of `Integer.MAX_VALUE-1` will be used. You should therefore rarely see a
 second page by default.
 
+### More complex node selections
+FlockDB also supports set arithmetic base queries over incident nodes. You may, for example, want to now, which users
+follow person A and person B and are not blocked by person C:
+
+	int FOLLOWS = 1;
+	int BLOCKS = 2;
+	List<PagedNodeIdList> result = myFlockDBConnection
+		.select(
+			difference(
+				intersect(
+					simpleSelection(personAId, FOLLOWS, INCOMING),
+					simpleSelection(personBId, FOLLOWS, INCOMING)
+				),
+				simpleSelection(personCId, BLOCKS, OUTGOING)
+			)
+		)
+		.execute();
+
+As you may guess from the return type, multiple select queries may be batched and the result may be paged in the same
+way as described above for the Edge selections.
+
+What you have to be aware of
+----------------------------
+Even if this code has a quite good unit test coverage, nearly no integration tests have been written to see, if it
+really works with a real FlockDB server. So I would not suggest to use this code in a production environment without
+a lot of prior testing. If you find any errors or wrong/misleading documentation, please drop me a line or – better –
+send me a pull request.
