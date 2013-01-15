@@ -67,6 +67,7 @@ instantiate it using a the hostName and the port of your running FlockDB server:
 
 	FlockDB myFlockConnection = new FlockDB("localhost", 7915);
 
+### Mutating operations – add, remove, negate and archive
 Once you have a `FlockDB` instance at your fingertips, you may use it for all the operations provided by the server. The
 first thing you may want to do is adding nodes to your instance:
 
@@ -87,6 +88,7 @@ negate and archive edges or to add multiple edges at once:
 		.remove(1, 2, OUTGOING, 6) // removes edge 1->6
 		.execute();
 
+### Basic selections
 After filling the database you will probably want to query your data. The easiest way to do this is querying for a
 single edge:
 
@@ -106,6 +108,7 @@ test, if a node exists:
 
 	boolean nodeExists = myFlockConnection.containsMetadata(1,2);
 
+### More complex edge selections
 There are often situations, where you want not to get a single edge, but a whole bunch of edges. For these use cases,
 `selectEdges` will be your friend. You may even batch many batch selection queries into one call, leading to less
 network io:
@@ -116,7 +119,7 @@ network io:
  		.selectEdges(8, 9, OUTGOING).withPageSize(20) // retrieves the first 20 outgoing edges from node 8 in graph 9
  		.execute()
 
-The paging options allway belong to the last added selection. You may also specify a page offset by giving the id of the
+The paging options always belong to the last added selection. You may also specify a page offset by giving the id of the
 first node of a page:
 
  	List<PagedEdgeList> edgeLists = myFlockConnection
@@ -125,4 +128,7 @@ first node of a page:
  		.execute()
 
 The resulting `PagedEdgeList` instances offer an `Iterator<Edge>` for the current page, `getNextPage()` and
-`getPreviousPage()` methods to navigate from page to page and `hasNextPage()` and `hasPreviousPage()` methods.
+`getPreviousPage()` methods to navigate from page to page and `hasNextPage()` and `hasPreviousPage()` methods. If you
+provide no page size, a default page size of `Integer.MAX_VALUE-1` will be used. You should therefore rarely see a
+second page by default.
+
