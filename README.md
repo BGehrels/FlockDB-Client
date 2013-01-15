@@ -106,3 +106,23 @@ test, if a node exists:
 
 	boolean nodeExists = myFlockConnection.containsMetadata(1,2);
 
+There are often situations, where you want not to get a single edge, but a whole bunch of edges. For these use cases,
+`selectEdges` will be your friend. You may even batch many batch selection queries into one call, leading to less
+network io:
+
+ 	List<PagedEdgeList> edgeLists = myFlockConnection
+ 		.selectEdges(1, 2, OUTGOING) // retrieves all outgoing edges of node 1 in graph 2
+ 		.selectEdges(2, 3, INCOMING, 4, 5, 6) // retrieves the edges 4->2, 5->2, 6->2 in grap 3, if they exist.
+ 		.selectEdges(8, 9, OUTGOING).withPageSize(20) // retrieves the first 20 outgoing edges from node 8 in graph 9
+ 		.execute()
+
+The paging options allway belong to the last added selection. You may also specify a page offset by giving the id of the
+first node of a page:
+
+ 	List<PagedEdgeList> edgeLists = myFlockConnection
+ 		.selectEdges(1, 2, OUTGOING).withPageStartNode(12345)
+ 		.selectEdges(2, 3, INCOMING).withPageStartNode(23456).withPageSize(20)
+ 		.execute()
+
+The resulting `PagedEdgeList` instances offer an `Iterator<Edge>` for the current page, `getNextPage()` and
+`getPreviousPage()` methods to navigate from page to page and `hasNextPage()` and `hasPreviousPage()` methods.
