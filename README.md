@@ -17,7 +17,7 @@ FlockDBClient
 =============
 
 *FlockDB Client* is a lightweight, idiomatic Java wrapper around the Thrift API of FlockDB, providing fluent interface
-based access. You may call it a FlockDB Java driver.
+based access. You may call it a FlockDB Java driver. It is free Software Licensed under the Apache License Version 2.0.
 
 Why should i use this Wrapper?
 ------------------------------
