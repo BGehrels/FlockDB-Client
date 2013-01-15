@@ -6,3 +6,8 @@ Twitter.
 
 Thrift is originally developed by Mark Slee, Aditya Agarwal and Marc Kwiatkowski at Facebook. It is now a project of the
 Apache Software Foundation.
+
+The build process uses the Thrift Maven Plugin by David Trott.
+
+The test code makes intensive use of Hamcrest (http://www.hamcrest.org) as an easy way to get beautiful troubleshooting
+output for failing tests.
