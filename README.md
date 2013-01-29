@@ -13,11 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 --->
-FlockDBClient
-=============
+FlockDB Client
+==============
+A lightweight, idiomatic Java wrapper around the Thrift API of FlockDB.
 
-*FlockDB Client* is a lightweight, idiomatic Java wrapper around the Thrift API of FlockDB, providing fluent interface
-based access. You may call it a FlockDB Java driver. It is free Software Licensed under the Apache License Version 2.0.
+*FlockDB Client* provides fluent interface based access for Twitters Graph Database. You may call this a FlockDB Java
+driver. *FlockDB Client* is free software licensed under the Apache License Version 2.0.
 
 Why should i use this Wrapper?
 ------------------------------
